@@ -6,287 +6,85 @@
 <meta name="description" content="Faiyaz Gift Image-to-Video">
 <title>Faiyaz Gift — Image to Video</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#080a0f;color:#eef2ff;font-family:Inter,system-ui,-apple-system,Segoe UI,Arial}.app{min-height:100vh;display:flex}.side{width:255px;background:#0d1017;border-right:1px solid #202532;padding:18px;display:flex;flex-direction:column}.logo{font-size:25px;font-weight:900;margin-bottom:22px}.new{border:1px solid #303747;background:#171b24;color:#fff;padding:12px;border-radius:12px;font-weight:800}.nav{margin-top:24px;display:grid;gap:4px}.nav div{padding:11px;border-radius:10px;color:#aeb7c6}.nav .active{background:#171b24;color:#fff}.bottom{margin-top:auto;color:#9da7b8}.bottom div{padding:10px}.main{flex:1;min-width:0;display:flex;flex-direction:column}.top{height:64px;border-bottom:1px solid #202532;display:flex;align-items:center;justify-content:space-between;padding:0 22px}.content{max-width:900px;width:92%;margin:auto;padding:42px 0 70px}.hero{text-align:center}.orb{width:64px;height:64px;margin:auto;border-radius:20px;background:linear-gradient(135deg,#7c5cff,#2ea7ff);display:grid;place-items:center;font-size:30px}.hero h1{font-size:46px;letter-spacing:-2px;margin:18px 0 8px}.hero p{color:#8e98a9}.workspace{margin-top:32px;background:#11151d;border:1px solid #293140;border-radius:20px;padding:18px}.upload{border:1px dashed #465064;border-radius:15px;min-height:190px;display:grid;place-items:center;text-align:center;background:#0b0e14;padding:20px}.upload input{max-width:100%;margin-top:12px}.preview{display:none;margin-top:14px;max-height:300px;max-width:100%;margin-left:auto;margin-right:auto;border-radius:12px}.prompt{width:100%;min-height:115px;margin-top:14px;background:#0b0e14;border:1px solid #2a3140;border-radius:14px;color:#fff;padding:15px;resize:vertical;outline:none}.options{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.options label{font-size:12px;color:#8993a5}.options select{width:100%;margin-top:6px;background:#181d27;border:1px solid #303746;color:#fff;border-radius:10px;padding:10px}.actions{display:flex;justify-content:flex-end;margin-top:12px}.generate{background:#7c5cff;color:#fff;border:0;border-radius:11px;padding:12px 18px;font-weight:900}.generate:disabled{opacity:.5;cursor:not-allowed}.status{display:none;margin-top:16px;color:#aeb7c6}.result{display:none;margin-top:18px;border-top:1px solid #252c39;padding-top:18px}.result video{width:100%;max-height:560px;border-radius:14px;background:#000}.download{display:inline-block;margin-top:10px;background:#181d27;border:1px solid #303746;color:#fff;padding:10px 14px;border-radius:10px;text-decoration:none}.error{display:none;margin-top:14px;padding:12px;border-radius:10px;background:#32151b;color:#ffb8c1;border:1px solid #63303a}.note{text-align:center;color:#626c7c;font-size:11px;margin-top:10px}
+*{box-sizing:border-box}body{margin:0;background:#080a0f;color:#eef2ff;font-family:Inter,system-ui,-apple-system,Segoe UI,Arial}.app{min-height:100vh;display:flex}.side{width:255px;background:#0d1017;border-right:1px solid #202532;padding:18px;display:flex;flex-direction:column}.logo{font-size:25px;font-weight:900;margin-bottom:22px}.logo span{color:#7c5cff}.new{border:1px solid #303747;background:#171b24;color:#fff;padding:12px;border-radius:12px;font-weight:800}.nav{margin-top:24px;display:grid;gap:4px}.nav div{padding:11px;border-radius:10px;color:#aeb7c6}.nav .active{background:#171b24;color:#fff}.bottom{margin-top:auto;color:#9da7b8}.bottom div{padding:10px}.main{flex:1;min-width:0;display:flex;flex-direction:column}.top{height:64px;border-bottom:1px solid #202532;display:flex;align-items:center;justify-content:space-between;padding:0 22px}.content{max-width:900px;width:92%;margin:auto;padding:42px 0 70px}.hero{text-align:center}.orb{width:64px;height:64px;margin:auto;border-radius:20px;background:linear-gradient(135deg,#7c5cff,#2ea7ff);display:grid;place-items:center;font-size:30px}.hero h1{font-size:46px;letter-spacing:-2px;margin:18px 0 8px}.hero p{color:#8e98a9}.workspace{margin-top:32px;background:#11151d;border:1px solid #293140;border-radius:20px;padding:18px}.upload{border:1px dashed #465064;border-radius:15px;min-height:190px;display:grid;place-items:center;text-align:center;background:#0b0e14;padding:20px}.upload input{max-width:100%;margin-top:12px}.preview{display:none;margin-top:14px;max-height:300px;max-width:100%;margin-left:auto;margin-right:auto;border-radius:12px}.prompt{width:100%;min-height:115px;margin-top:14px;background:#0b0e14;border:1px solid #2a3140;border-radius:14px;color:#fff;padding:15px;resize:vertical;outline:none}.options{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.options label{font-size:12px;color:#8993a5}.options select{width:100%;margin-top:6px;background:#181d27;border:1px solid #303746;color:#fff;border-radius:10px;padding:10px}.actions{display:flex;justify-content:flex-end;margin-top:12px}.generate{background:#7c5cff;color:#fff;border:0;border-radius:11px;padding:12px 18px;font-weight:900}.generate:disabled{opacity:.5;cursor:not-allowed}.status{display:none;margin-top:16px;color:#aeb7c6}.result{display:none;margin-top:18px;border-top:1px solid #252c39;padding-top:18px}.result video{width:100%;max-height:560px;border-radius:14px;background:#000}.download{display:inline-block;margin-top:10px;background:#181d27;border:1px solid #303746;color:#fff;padding:10px 14px;border-radius:10px;text-decoration:none}.error{display:none;margin-top:14px;padding:12px;border-radius:10px;background:#32151b;color:#ffb8c1;border:1px solid #63303a}.note{text-align:center;color:#626c7c;font-size:11px;margin-top:10px}
 @media(max-width:750px){.side{display:none}.content{padding-top:28px}.hero h1{font-size:36px}.options{grid-template-columns:1fr}.top{padding:0 14px}}
 </style>
 </head>
 <body>
-
 <div class="app">
-
 <aside class="side">
   <div class="logo">Faiyaz Gift</div>
-
   <button class="new" onclick="resetForm()">＋ New creation</button>
-
-  <div class="nav">
-    <div class="active">🎬 Image to Video</div>
-    <div>💬 Chat</div>
-    <div>🖼️ My images</div>
-    <div>🎞️ My videos</div>
-  </div>
-
-  <div class="bottom">
-    <div>⚙ Settings</div>
-    <div>☼ Appearance</div>
-  </div>
+  <div class="nav"><div class="active">🎬 Image to Video</div><div>💬 Chat</div><div>🖼️ My images</div><div>🎞️ My videos</div></div>
+  <div class="bottom"><div>⚙ Settings</div><div>☼ Appearance</div></div>
 </aside>
-
 <main class="main">
-
-<header class="top">
-  <strong>Faiyaz Gift Studio</strong>
-  <span style="color:#8993a5;font-size:13px">Image → Video</span>
-</header>
-
+<header class="top"><strong>Faiyaz Gift Studio</strong><span style="color:#8993a5;font-size:13px">Image → Video</span></header>
 <section class="content">
-
-  <div class="hero">
-    <div class="orb">✦</div>
-    <h1>Turn an image into a video</h1>
-    <p>Upload your image and describe the motion you want.</p>
-  </div>
-
+  <div class="hero"><div class="orb">✦</div><h1>Turn an image into a video</h1><p>Upload your image and describe the motion you want.</p></div>
   <div class="workspace">
-
     <div class="upload" id="drop">
       <div>
         <div style="font-size:40px">🖼️➡️🎬</div>
         <strong>Select an image</strong>
-
-        <div style="color:#788395;font-size:13px;margin-top:5px">
-          JPG, PNG or WEBP · up to 12 MB
-        </div>
-
-        <input
-          id="image"
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-        >
-
+        <div style="color:#788395;font-size:13px;margin-top:5px">JPG, PNG or WEBP · up to 12 MB</div>
+        <input id="image" type="file" accept="image/jpeg,image/png,image/webp">
         <img id="preview" class="preview" alt="Selected image">
       </div>
     </div>
-
-    <textarea
-      id="prompt"
-      class="prompt"
-      placeholder="Describe the motion, camera movement, atmosphere, and style..."
-    ></textarea>
-
+    <textarea id="prompt" class="prompt" placeholder="Describe the motion, camera movement, atmosphere, and style..."></textarea>
     <div class="options">
-
-      <label>
-        Aspect ratio
-        <select id="ratio">
-          <option>16:9</option>
-          <option>9:16</option>
-          <option>1:1</option>
-          <option>4:5</option>
-          <option>5:4</option>
-          <option>3:2</option>
-          <option>2:3</option>
-        </select>
-      </label>
-
-      <label>
-        Resolution
-        <select id="resolution">
-          <option>720p</option>
-          <option>1080p</option>
-        </select>
-      </label>
-
-      <label>
-        Duration
-        <select id="duration">
-          <option value="5">5 seconds</option>
-          <option value="10">10 seconds</option>
-        </select>
-      </label>
-
+      <label>Aspect ratio<select id="ratio"><option>16:9</option><option>9:16</option><option>1:1</option><option>4:5</option><option>5:4</option><option>3:2</option><option>2:3</option></select></label>
+      <label>Resolution<select id="resolution"><option>720p</option><option>1080p</option></select></label>
+      <label>Duration<select id="duration"><option value="5">5 seconds</option><option value="10">10 seconds</option></select></label>
     </div>
-
-    <div class="actions">
-      <button class="generate" id="generate" onclick="generate()">
-        Generate Video
-      </button>
-    </div>
-
-    <div class="status" id="status">
-      Generating video… this can take some time.
-    </div>
-
+    <div class="actions"><button class="generate" id="generate" onclick="generate()">Generate Video</button></div>
+    <div class="status" id="status">Generating video… this can take some time.</div>
     <div class="error" id="error"></div>
-
-    <div class="result" id="result">
-      <video id="video" controls playsinline></video>
-      <br>
-      <a
-        id="download"
-        class="download"
-        target="_blank"
-        rel="noopener"
-      >
-        Open / download video
-      </a>
-    </div>
-
-    <div class="note">
-      Real generation is connected to the server-side API.
-      No demo video or fixed response is used.
-    </div>
-
+    <div class="result" id="result"><video id="video" controls playsinline></video><br><a id="download" class="download" target="_blank" rel="noopener">Open / download video</a></div>
+    <div class="note"></div>
   </div>
-
 </section>
-
 </main>
 </div>
-
 <script>
-
 const image = document.getElementById('image');
 const preview = document.getElementById('preview');
-
 image.addEventListener('change', () => {
-
   const file = image.files[0];
-
-  if (!file) {
-    preview.style.display = 'none';
-    return;
-  }
-
+  if (!file) { preview.style.display='none'; return; }
   preview.src = URL.createObjectURL(file);
-  preview.style.display = 'block';
-
+  preview.style.display='block';
 });
-
 function resetForm(){
-
-  image.value = '';
-  preview.style.display = 'none';
-  preview.removeAttribute('src');
-
-  document.getElementById('prompt').value = '';
-  document.getElementById('result').style.display = 'none';
-  document.getElementById('error').style.display = 'none';
-  document.getElementById('status').style.display = 'none';
-
+  image.value=''; preview.style.display='none'; preview.removeAttribute('src');
+  document.getElementById('prompt').value='';
+  document.getElementById('result').style.display='none';
+  document.getElementById('error').style.display='none';
+  document.getElementById('status').style.display='none';
 }
-
 async function generate(){
-
-  const file = image.files[0];
-
-  const prompt =
-    document.getElementById('prompt').value.trim();
-
-  const error =
-    document.getElementById('error');
-
-  const status =
-    document.getElementById('status');
-
-  const result =
-    document.getElementById('result');
-
-  const video =
-    document.getElementById('video');
-
-  const download =
-    document.getElementById('download');
-
-  const button =
-    document.getElementById('generate');
-
-  error.style.display = 'none';
-  result.style.display = 'none';
-
-  if(!file){
-
-    error.textContent =
-      'Please select an image first.';
-
-    error.style.display = 'block';
-    return;
-  }
-
-  if(!prompt){
-
-    error.textContent =
-      'Please describe the motion you want.';
-
-    error.style.display = 'block';
-    return;
-  }
-
-  const fd = new FormData();
-
-  fd.append('image', file);
-  fd.append('prompt', prompt);
-
-  fd.append(
-    'aspect_ratio',
-    document.getElementById('ratio').value
-  );
-
-  fd.append(
-    'resolution',
-    document.getElementById('resolution').value
-  );
-
-  fd.append(
-    'duration',
-    document.getElementById('duration').value
-  );
-
-  button.disabled = true;
-  status.style.display = 'block';
-
+  const file=image.files[0], prompt=document.getElementById('prompt').value.trim();
+  const error=document.getElementById('error'), status=document.getElementById('status');
+  const result=document.getElementById('result'), video=document.getElementById('video'), download=document.getElementById('download'), button=document.getElementById('generate');
+  error.style.display='none'; result.style.display='none';
+  if(!file){error.textContent='Please select an image first.';error.style.display='block';return}
+  if(!prompt){error.textContent='Please describe the motion you want.';error.style.display='block';return}
+  const fd=new FormData();
+  fd.append('image',file); fd.append('prompt',prompt);
+  fd.append('aspect_ratio',document.getElementById('ratio').value);
+  fd.append('resolution',document.getElementById('resolution').value);
+  fd.append('duration',document.getElementById('duration').value);
+  button.disabled=true; status.style.display='block';
   try{
-
-    const res = await fetch(
-      '/api/generate',
-      {
-        method: 'POST',
-        body: fd
-      }
-    );
-
-    const data = await res.json();
-
-    if(!res.ok)
-      throw new Error(
-        data.error || 'Generation failed.'
-      );
-
-    video.src = data.video;
-    download.href = data.video;
-
-    result.style.display = 'block';
-
-    video.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center'
-    });
-
-  }catch(e){
-
-    error.textContent = e.message;
-    error.style.display = 'block';
-
-  }finally{
-
-    button.disabled = false;
-    status.style.display = 'none';
-
-  }
-
+    const res=await fetch('/api/generate',{method:'POST',body:fd});
+    const data=await res.json();
+    if(!res.ok) throw new Error(data.error||'Generation failed.');
+    video.src=data.video; download.href=data.video; result.style.display='block';
+    video.scrollIntoView({behavior:'smooth',block:'center'});
+  }catch(e){error.textContent=e.message;error.style.display='block'}
+  finally{button.disabled=false;status.style.display='none'}
 }
-
 </script>
-
 </body>
 </html>
