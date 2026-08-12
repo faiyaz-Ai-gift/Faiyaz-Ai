@@ -1,18 +1,14 @@
 {
-  "name": "faiyaz-gift-free-image-to-video",
+  "name": "faiyaz-gift-ai-studio",
   "version": "1.0.0",
   "private": true,
-  "description": "Free browser-based image-to-video motion generator",
+  "description": "Faiyaz Gift AI image and image-to-video studio",
   "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
-  "engines": {
-    "node": ">=18"
-  },
+  "scripts": {"start": "node server.js"},
   "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.21.2",
-    "@fal-ai/client": "^1.10.1"
+    "@fal-ai/client": "latest",
+    "cors": "latest",
+    "express": "latest",
+    "multer": "latest"
   }
 }

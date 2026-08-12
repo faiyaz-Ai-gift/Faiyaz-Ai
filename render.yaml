@@ -1,7 +1,9 @@
 services:
   - type: web
-    name: faiyaz-gift-image-to-video
+    name: faiyaz-gift-ai-studio
     runtime: node
-    plan: free
     buildCommand: npm install
     startCommand: npm start
+    envVars:
+      - key: FAL_KEY
+        sync: false
