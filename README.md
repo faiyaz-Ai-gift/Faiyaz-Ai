@@ -1,26 +1,27 @@
-# Faiyaz Gift — AI Image-to-Video
+# Faiyaz Gift — Free AI Image to Video
 
-This version uses a real image-to-video model instead of the old browser-only zoom effect.
+This version uses a public Hugging Face ZeroGPU Space running LTX 2.3 for real image-to-video generation.
 
-## AI model
+## What changed
 
-The server uses **Wan 2.2 I2V Fast** through Replicate. It accepts an input image plus a motion prompt and supports portrait 9:16 output. The model's API supports 81 frames, which is about 5 seconds at 16 fps. See the official model/API documentation for current limits and pricing.
+- Removed the paid Replicate dependency.
+- Removed the FAL dependency.
+- No API key is required by this app by default.
+- Generation runs asynchronously so a long GPU queue does not keep the Render request open.
+- The frontend polls the job and displays the exact provider error when the free service rejects/fails a request.
+- 5s and 10s generation are available.
 
-## Render setup
+## Free provider
 
-1. Create a Render Web Service from this project.
-2. Build command: `npm install`
-3. Start command: `npm start`
-4. Add this Environment Variable in Render:
-   - `REPLICATE_API_TOKEN` = your Replicate API token
-5. Deploy.
+Default provider:
+`https://shaundeoOo-ltx-2-3-fast.hf.space`
 
-**Never put the token in `public/index.html` or commit it to GitHub.**
+The Space exposes a Gradio `/generate` API and runs LTX 2.3 on Hugging Face ZeroGPU. Free availability depends on the public Space's queue/limits; this is not an unlimited guaranteed API.
 
-## Free usage note
+## Render
 
-Replicate is pay-as-you-go and some models can be run free only within its current free limits. A VPN does not make paid API usage free and should not be used to bypass provider billing or regional restrictions. If the account has no usable free allowance, the site will show the provider's exact error instead of generating a fake video.
+Deploy as a normal Node service with the included `render.yaml`. No `REPLICATE_API_TOKEN` or `FAL_KEY` is needed.
 
-## Error handling
-
-The frontend expects JSON from the backend. The backend returns structured JSON for configuration, provider, network, and generation errors, so HTML responses such as `Unexpected token '<'` are no longer silently shown as a JSON parsing error.
+Optional environment variable:
+- `HF_VIDEO_SPACE` — override the public Space URL if you later choose another compatible Gradio Space.
+- `HF_TOKEN` — optional; only needed if the selected Space later requires authentication.
