@@ -1,8 +1,10 @@
-# Faiyaz Gift AI Studio
+# Faiyaz Gift — AI Image & Video Studio
 
-This version keeps Image → Video and adds Text → Image.
+This build opens on **AI Image Generator** by default. Image-to-Video remains available as a separate mode.
 
-## Render environment variable
-Add `FAL_KEY` in Render Environment Variables. Do not put the key in `index.html`.
+## Render
+- Build: `npm install`
+- Start: `npm start`
+- Environment variable: `FAL_KEY`
 
-Image generation uses `fal-ai/flux/schnell` and the existing video endpoint remains available.
+Image generation uses `fal-ai/flux/schnell` through the server-side FAL API. The browser never receives the API key.
