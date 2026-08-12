@@ -1,17 +1,14 @@
 {
-  "name": "ainova-render-image-to-video",
+  "name": "faiyaz-gift-image-to-video",
   "version": "1.0.0",
   "private": true,
-  "description": "Faiyaz Gift Image-to-Video app with a Render-ready Node backend and fal.ai integration",
-  "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=18"
   },
   "dependencies": {
-    "@fal-ai/client": "^1.7.1",
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "multer": "^1.4.5-lts.1"
