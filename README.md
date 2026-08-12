@@ -1,35 +1,26 @@
-# Faiyaz Gift — Render Image-to-Video
+# Faiyaz Gift — AI Image-to-Video
 
-This is a real, Render-ready Image-to-Video web app. It has NO fixed demo response and NO hard-coded demo video.
+This version uses a real image-to-video model instead of the old browser-only zoom effect.
 
-## What it does
+## AI model
 
-1. User selects JPG/PNG/WEBP image.
-2. User writes a motion prompt.
-3. Browser sends the image + options to `/api/generate`.
-4. Node/Express backend sends the request to `fal-ai/pika/v2.2/image-to-video`.
-5. Backend returns the generated video's URL.
-6. Browser displays the actual generated video.
+The server uses **Wan 2.2 I2V Fast** through Replicate. It accepts an input image plus a motion prompt and supports portrait 9:16 output. The model's API supports 81 frames, which is about 5 seconds at 16 fps. See the official model/API documentation for current limits and pricing.
 
-## Deploy to Render
+## Render setup
 
-1. Create a new Web Service on Render from this project/repository.
+1. Create a Render Web Service from this project.
 2. Build command: `npm install`
 3. Start command: `npm start`
-4. Add Environment Variable:
-   - Key: `FAL_KEY`
-   - Value: your fal.ai API key
+4. Add this Environment Variable in Render:
+   - `REPLICATE_API_TOKEN` = your Replicate API token
 5. Deploy.
 
-You do NOT put FAL_KEY in `public/index.html`.
+**Never put the token in `public/index.html` or commit it to GitHub.**
 
-## Important
+## Free usage note
 
-- Generation is real and can incur fal.ai usage charges.
-- The backend uses a base64 data URI for the uploaded image. This is convenient but increases request size; the upload is limited to 12 MB.
-- For a larger production service, use object storage/fal storage and a queue/webhook architecture.
-- Add authentication, rate limiting, abuse protection, usage limits, terms/privacy, and billing before opening this publicly.
+Replicate is pay-as-you-go and some models can be run free only within its current free limits. A VPN does not make paid API usage free and should not be used to bypass provider billing or regional restrictions. If the account has no usable free allowance, the site will show the provider's exact error instead of generating a fake video.
 
-## Model
+## Error handling
 
-The backend currently uses `fal-ai/pika/v2.2/image-to-video`.
+The frontend expects JSON from the backend. The backend returns structured JSON for configuration, provider, network, and generation errors, so HTML responses such as `Unexpected token '<'` are no longer silently shown as a JSON parsing error.

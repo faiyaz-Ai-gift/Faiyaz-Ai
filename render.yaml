@@ -1,10 +1,10 @@
 services:
   - type: web
-    name: ainova-image-to-video
+    name: faiyaz-gift-image-to-video
     runtime: node
     plan: free
     buildCommand: npm install
     startCommand: npm start
     envVars:
-      - key: FAL_KEY
+      - key: REPLICATE_API_TOKEN
         sync: false
