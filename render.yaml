@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: ainova-image-to-video
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: FAL_KEY
+        sync: false
