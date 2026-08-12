@@ -15,12 +15,12 @@
 <aside class="side">
   <div class="logo">Faiyaz Gift</div>
   <button class="new" onclick="resetForm()">＋ New creation</button>
-  <div class="nav"><div id="navVideo" class="active" onclick="showMode('video')">🎬 Image to Video</div><div id="navImage" onclick="showMode('image')">🖼️ Text to Image</div><div>💬 Chat</div><div>🖼️ My images</div><div>🎞️ My videos</div></div>
+  <div class="nav"><div id="navVideo" onclick="showMode('video')">🎬 Image to Video</div><div id="navImage" class="active" onclick="showMode('image')">🖼️ AI Image Generator</div><div>💬 Chat</div><div>🖼️ My images</div><div>🎞️ My videos</div></div>
   <div class="bottom"><div>⚙ Settings</div><div>☼ Appearance</div></div>
 </aside>
 <main class="main">
-<header class="top"><strong>Faiyaz Gift Studio</strong><span id="modeLabel" style="color:#8993a5;font-size:13px">Image → Video</span></header>
-<section class="content" id="videoMode">
+<header class="top"><strong>Faiyaz Gift Studio</strong><span id="modeLabel" style="color:#8993a5;font-size:13px">AI Image Generator</span></header>
+<section class="content" id="videoMode" style="display:none">
   <div class="hero"><div class="orb">✦</div><h1>Turn an image into a video</h1><p>Upload your image and describe the motion you want.</p></div>
   <div class="workspace">
     <div class="upload" id="drop">
@@ -45,7 +45,7 @@
     <div class="note">Real generation is connected to the server-side API. No demo video or fixed response is used.</div>
   </div>
 </section>
-<section class="content" id="imageMode" style="display:none">
+<section class="content" id="imageMode">
   <div class="hero"><div class="orb">✦</div><h1>Create an image with AI</h1><p>Describe the image you want and generate it from text.</p></div>
   <div class="workspace">
     <textarea id="imagePrompt" class="prompt" placeholder="Describe the image in detail — subject, scene, lighting, camera, style..." style="min-height:150px"></textarea>
@@ -111,7 +111,7 @@ function showMode(mode){
   const isImage=mode==="image";
   video.style.display=isImage?"none":"block"; image.style.display=isImage?"block":"none";
   nv.classList.toggle("active",!isImage); ni.classList.toggle("active",isImage);
-  label.textContent=isImage?"Text → Image":"Image → Video";
+  label.textContent=isImage?"AI Image Generator":"Image → Video";
 }
 async function generateImage(){
   const prompt=document.getElementById("imagePrompt").value.trim();
