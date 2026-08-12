@@ -21,7 +21,7 @@
 <main class="main">
 <header class="top"><strong>Faiyaz Gift Studio</strong><span style="color:#8993a5;font-size:13px">Image → Video</span></header>
 <section class="content">
-  <div class="hero"><div class="orb">✦</div><h1>Turn an image into a video</h1><p>Upload your image and describe the motion you want.</p><div class="free-badge">100% free • No FAL API • Runs in your browser</div></div>
+  <div class="hero"><div class="orb">✦</div><h1>Turn an image into a video</h1><p>Upload your image and describe the motion you want.</p><div class="free-badge" id="providerBadge">Checking AI provider…</div></div>
   <div class="workspace">
     <div class="upload" id="drop">
       <div>
@@ -36,14 +36,14 @@
     <div class="options">
       <label>Aspect ratio<select id="ratio"><option>16:9</option><option>9:16</option><option>1:1</option><option>4:5</option><option>5:4</option><option>3:2</option><option>2:3</option></select></label>
       <label>Resolution<select id="resolution"><option>720p</option><option>1080p</option></select></label>
-      <label>Duration<select id="duration"><option value="5">5 seconds</option><option value="10">10 seconds</option></select></label>
+      <label>Duration<select id="duration"><option value="5">5 seconds</option><option value="10" disabled>10 seconds (AI model limit)</option></select></label>
     </div>
     <div class="actions"><button class="generate" id="generate" onclick="generate()">Generate Video</button></div>
-    <div class="status" id="status">Creating video locally in your browser…</div>
+    <div class="status" id="status">Starting AI generation…</div>
     <div class="progress" id="progress"><div id="progressBar"></div></div>
     <div class="error" id="error"></div>
     <div class="result" id="result"><video id="video" controls playsinline></video><br><a id="download" class="download">Open / download video</a></div>
-    <div class="note">No FAL key, paid API, or external video-generation service is used. This version creates a smooth camera-motion video from your image locally. It is not AI video generation.</div>
+    <div class="note">AI mode uses an image-to-video model on the server. No FAL key is used. Keep the API token only in Render Environment Variables — never put it in this page.</div>
   </div>
 </section>
 </main>
@@ -51,32 +51,116 @@
 <script>
 const image=document.getElementById('image'),preview=document.getElementById('preview');
 const ratioEl=document.getElementById('ratio'),resolutionEl=document.getElementById('resolution'),durationEl=document.getElementById('duration');
-image.addEventListener('change',()=>{const f=image.files[0];if(!f){preview.style.display='none';return}preview.src=URL.createObjectURL(f);preview.style.display='block'});
-function resetForm(){image.value='';preview.style.display='none';preview.removeAttribute('src');document.getElementById('prompt').value='';document.getElementById('result').style.display='none';document.getElementById('error').style.display='none';document.getElementById('status').style.display='none';document.getElementById('progress').style.display='none';document.getElementById('progressBar').style.width='0%'}
-function showError(msg){const e=document.getElementById('error');e.textContent=msg;e.style.display='block'}
-function parseMotion(prompt){const p=prompt.toLowerCase();let mode='zoom-in';if(/zoom\s*out|zooming\s*out|pull\s*back|pullback|zoom out/.test(p))mode='zoom-out';else if(/pan\s*(right|left)|move\s*(right|left)|camera\s*(right|left)/.test(p))mode=/left/.test(p)?'pan-left':'pan-right';else if(/tilt\s*(up|down)|move\s*(up|down)/.test(p))mode=/down/.test(p)?'pan-down':'pan-up';else if(/rotate|orbit|turn/.test(p))mode='orbit';return mode}
-function getCanvasSize(){const r=ratioEl.value,base=resolutionEl.value==='1080p'?1080:720;const map={'16:9':[16,9],'9:16':[9,16],'1:1':[1,1],'4:5':[4,5],'5:4':[5,4],'3:2':[3,2],'2:3':[2,3]};const [w,h]=map[r]||[16,9];if(w>=h)return [base,Math.round(base*h/w)];return [Math.round(base*w/h),base]}
-function fitCover(ctx,img,W,H,scale=1,dx=0,dy=0,angle=0){const s=Math.max(W/img.width,H/img.height)*scale;const iw=img.width*s,ih=img.height*s;ctx.save();ctx.translate(W/2+dx,H/2+dy);ctx.rotate(angle);ctx.drawImage(img,-iw/2,-ih/2,iw,ih);ctx.restore()}
-async function generate(){
- const file=image.files[0],prompt=document.getElementById('prompt').value.trim();const error=document.getElementById('error'),status=document.getElementById('status'),result=document.getElementById('result'),video=document.getElementById('video'),download=document.getElementById('download'),button=document.getElementById('generate'),progress=document.getElementById('progress'),bar=document.getElementById('progressBar');
- error.style.display='none';result.style.display='none';
- if(!file){showError('Please select an image first.');return} if(!prompt){showError('Please describe the motion you want.');return}
- if(!window.MediaRecorder||!HTMLCanvasElement.prototype.captureStream){showError('This browser does not support local video recording. Please use the latest Chrome or another modern browser.');return}
- button.disabled=true;status.style.display='block';progress.style.display='block';bar.style.width='0%';
- let url=null;
- try{
-   const img=new Image();img.src=URL.createObjectURL(file);await new Promise((res,rej)=>{img.onload=res;img.onerror=()=>rej(new Error('Could not read the selected image.'))});
-   const [W,H]=getCanvasSize();const canvas=document.createElement('canvas');canvas.width=W;canvas.height=H;const ctx=canvas.getContext('2d');
-   const stream=canvas.captureStream(30);const mime=MediaRecorder.isTypeSupported('video/webm;codecs=vp9')?'video/webm;codecs=vp9':(MediaRecorder.isTypeSupported('video/webm;codecs=vp8')?'video/webm;codecs=vp8':'video/webm');
-   const recorder=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:resolutionEl.value==='1080p'?6000000:3500000});const chunks=[];recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
-   const done=new Promise((res,rej)=>{recorder.onstop=res;recorder.onerror=()=>rej(new Error('Browser video recording failed.'))});
-   const seconds=Number(durationEl.value)||5,total=Math.round(seconds*30),mode=parseMotion(prompt);recorder.start(250);
-   for(let i=0;i<=total;i++){const t=i/total;ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);let scale=1,dx=0,dy=0,angle=0;
-     if(mode==='zoom-in')scale=1+0.10*t;else if(mode==='zoom-out')scale=1.10-0.10*t;else if(mode==='pan-right')dx=(t-.5)*W*.10;else if(mode==='pan-left')dx=(.5-t)*W*.10;else if(mode==='pan-up')dy=(.5-t)*H*.10;else if(mode==='pan-down')dy=(t-.5)*H*.10;else if(mode==='orbit'){angle=Math.sin(t*Math.PI*2)*0.012;scale=1+0.04*t}
-     fitCover(ctx,img,W,H,scale,dx,dy,angle);bar.style.width=Math.round(t*100)+'%';await new Promise(r=>setTimeout(r,1000/30));}
-   recorder.stop();await done;stream.getTracks().forEach(t=>t.stop());const blob=new Blob(chunks,{type:'video/webm'});url=URL.createObjectURL(blob);video.src=url;download.href=url;download.download='faiyaz-gift-free-video.webm';result.style.display='block';bar.style.width='100%';video.scrollIntoView({behavior:'smooth',block:'center'});
- }catch(e){if(url)URL.revokeObjectURL(url);showError(e.message||'Video generation failed.')}finally{button.disabled=false;status.style.display='none';setTimeout(()=>{progress.style.display='none'},500)}
+const providerBadge=document.getElementById('providerBadge');
+let currentObjectUrl=null;
+
+image.addEventListener('change',()=>{
+  const f=image.files[0];
+  if(currentObjectUrl) URL.revokeObjectURL(currentObjectUrl);
+  if(!f){preview.style.display='none';return}
+  currentObjectUrl=URL.createObjectURL(f); preview.src=currentObjectUrl; preview.style.display='block';
+});
+
+async function checkProvider(){
+  try{
+    const r=await fetch('/api/health',{cache:'no-store'}); const d=await r.json();
+    if(d.aiConfigured){providerBadge.textContent='AI video • Wan 2.2 I2V Fast';providerBadge.style.borderColor='#355f43';providerBadge.style.color='#b7f0c4';}
+    else {providerBadge.textContent='AI provider not configured';providerBadge.style.borderColor='#63303a';providerBadge.style.color='#ffb8c1';}
+  }catch{providerBadge.textContent='Server unavailable';providerBadge.style.borderColor='#63303a';providerBadge.style.color='#ffb8c1';}
 }
+checkProvider();
+
+function resetForm(){
+  image.value='';
+  if(currentObjectUrl) URL.revokeObjectURL(currentObjectUrl);
+  currentObjectUrl=null; preview.style.display='none'; preview.removeAttribute('src');
+  document.getElementById('prompt').value=''; document.getElementById('result').style.display='none';
+  document.getElementById('error').style.display='none'; document.getElementById('status').style.display='none';
+  document.getElementById('progress').style.display='none'; document.getElementById('progressBar').style.width='0%';
+}
+function showError(msg){const e=document.getElementById('error');e.textContent=msg;e.style.display='block';}
+
+function getCanvasSize(){
+  const r=ratioEl.value, base=resolutionEl.value==='1080p'?1080:720;
+  const map={'16:9':[16,9],'9:16':[9,16],'1:1':[1,1],'4:5':[4,5],'5:4':[5,4],'3:2':[3,2],'2:3':[2,3]};
+  const [w,h]=map[r]||[9,16];
+  if(w>=h)return [base,Math.round(base*h/w)];
+  return [Math.round(base*w/h),base];
+}
+
+function blobToDataUrl(blob){return new Promise((resolve,reject)=>{const fr=new FileReader();fr.onload=()=>resolve(fr.result);fr.onerror=reject;fr.readAsDataURL(blob);});}
+
+async function compressImage(file){
+  const img=new Image(); const src=URL.createObjectURL(file);
+  try{
+    img.src=src; await new Promise((res,rej)=>{img.onload=res;img.onerror=()=>rej(new Error('Could not read the selected image.'));});
+    // Keep enough detail for I2V while staying under Replicate's small data-URL limit.
+    let maxW=720,maxH=1280;
+    const ratio=img.width/img.height;
+    let w=img.width,h=img.height;
+    if(w>maxW || h>maxH){const scale=Math.min(maxW/w,maxH/h);w=Math.round(w*scale);h=Math.round(h*scale);}
+    const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;const ctx=canvas.getContext('2d');
+    ctx.drawImage(img,0,0,w,h);
+    let quality=.78, blob;
+    for(let i=0;i<8;i++){
+      blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',quality));
+      if(blob && blob.size<=240000) break;
+      quality*=.82;
+      if(quality<.35) break;
+    }
+    if(!blob || blob.size>255000) throw new Error('Could not compress the image enough for the AI provider. Try a smaller image.');
+    return await blobToDataUrl(blob);
+  } finally {URL.revokeObjectURL(src);}
+}
+
+function prettyProviderError(data){
+  if(!data) return 'The AI provider returned no response.';
+  let msg=data.error||data.detail||data.message;
+  if(typeof msg==='object') msg=JSON.stringify(msg);
+  return msg || ('Provider request failed (HTTP '+(data.providerStatus||'unknown')+').');
+}
+
+async function createAI(){
+  const file=image.files[0], prompt=document.getElementById('prompt').value.trim();
+  const error=document.getElementById('error'),status=document.getElementById('status'),result=document.getElementById('result'),video=document.getElementById('video'),download=document.getElementById('download'),button=document.getElementById('generate'),progress=document.getElementById('progress'),bar=document.getElementById('progressBar');
+  error.style.display='none'; result.style.display='none';
+  if(!file){showError('Please select an image first.');return;}
+  if(!prompt){showError('Please describe the motion you want.');return;}
+  button.disabled=true; status.style.display='block'; progress.style.display='block'; bar.style.width='3%';
+  try{
+    status.textContent='Preparing image for AI…';
+    const imageData=await compressImage(file);
+    status.textContent='Sending image to AI model…'; bar.style.width='8%';
+    const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:imageData,prompt,aspectRatio:ratioEl.value,resolution:resolutionEl.value==='1080p'?'720p':'480p',duration:5})});
+    const raw=await r.text(); let data; try{data=JSON.parse(raw);}catch{throw new Error('Server returned non-JSON data (HTTP '+r.status+'). Please redeploy the latest ZIP.');}
+    if(!r.ok || !data.ok) throw new Error(prettyProviderError(data));
+    let id=data.id;
+    if(data.output){return finish(data.output);}
+    status.textContent='AI is generating the video…';
+    let finished=false;
+    for(let i=0;i<120;i++){
+      await new Promise(r=>setTimeout(r,3000));
+      const sr=await fetch('/api/generate/'+encodeURIComponent(id),{cache:'no-store'}); const st=await sr.json();
+      if(!sr.ok || st.ok===false) throw new Error(prettyProviderError(st));
+      const pct=Math.min(95,10+Math.round((i+1)/120*85)); bar.style.width=pct+'%';
+      status.textContent=st.status==='starting'?'AI model is starting…':st.status==='processing'?'Generating real motion with AI…':'Checking generation…';
+      if(st.status==='succeeded' && st.output){finish(st.output);finished=true;break;}
+      if(st.status==='failed' || st.status==='canceled'){throw new Error(st.error||('AI generation '+st.status+'.'));}
+    }
+    if(!finished) throw new Error('AI generation took too long and was stopped. Please try again.');
+  }catch(e){showError(e.message||'AI video generation failed.');}
+  finally{button.disabled=false;status.style.display='none';setTimeout(()=>{progress.style.display='none'},400);}
+
+  function finish(output){
+    const video=document.getElementById('video'),download=document.getElementById('download'),result=document.getElementById('result'),bar=document.getElementById('progressBar');
+    const url=typeof output==='string'?output:(output?.url||output?.video||output?.[0]);
+    if(!url) throw new Error('AI provider finished but did not return a video URL.');
+    video.src=url; download.href=url; download.download='faiyaz-gift-ai-video.mp4'; result.style.display='block'; bar.style.width='100%';
+    video.scrollIntoView({behavior:'smooth',block:'center'});
+  }
+}
+
+async function generate(){await createAI();}
 </script>
 </body>
 </html>
