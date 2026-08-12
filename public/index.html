@@ -36,14 +36,14 @@
     <div class="options">
       <label>Aspect ratio<select id="ratio"><option>16:9</option><option>9:16</option><option>1:1</option><option>4:5</option><option>5:4</option><option>3:2</option><option>2:3</option></select></label>
       <label>Resolution<select id="resolution"><option>720p</option><option>1080p</option></select></label>
-      <label>Duration<select id="duration"><option value="5">5 seconds</option><option value="10" disabled>10 seconds (AI model limit)</option></select></label>
+      <label>Duration<select id="duration"><option value="5">5 seconds</option><option value="10">10 seconds</option></select></label>
     </div>
     <div class="actions"><button class="generate" id="generate" onclick="generate()">Generate Video</button></div>
     <div class="status" id="status">Starting AI generation…</div>
     <div class="progress" id="progress"><div id="progressBar"></div></div>
     <div class="error" id="error"></div>
     <div class="result" id="result"><video id="video" controls playsinline></video><br><a id="download" class="download">Open / download video</a></div>
-    <div class="note">AI mode uses an image-to-video model on the server. No FAL key is used. Keep the API token only in Render Environment Variables — never put it in this page.</div>
+    <div class="note">Free AI mode uses LTX 2.3 through a public Hugging Face ZeroGPU service. No FAL key, Replicate credit, or API token is required by this app.</div>
   </div>
 </section>
 </main>
@@ -64,8 +64,8 @@ image.addEventListener('change',()=>{
 async function checkProvider(){
   try{
     const r=await fetch('/api/health',{cache:'no-store'}); const d=await r.json();
-    if(d.aiConfigured){providerBadge.textContent='AI video • Wan 2.2 I2V Fast';providerBadge.style.borderColor='#355f43';providerBadge.style.color='#b7f0c4';}
-    else {providerBadge.textContent='AI provider not configured';providerBadge.style.borderColor='#63303a';providerBadge.style.color='#ffb8c1';}
+    if(d.aiConfigured){providerBadge.textContent='Free AI video • LTX 2.3 I2V';providerBadge.style.borderColor='#355f43';providerBadge.style.color='#b7f0c4';}
+    else {providerBadge.textContent='Free AI service unavailable';providerBadge.style.borderColor='#63303a';providerBadge.style.color='#ffb8c1';}
   }catch{providerBadge.textContent='Server unavailable';providerBadge.style.borderColor='#63303a';providerBadge.style.color='#ffb8c1';}
 }
 checkProvider();
@@ -94,7 +94,7 @@ async function compressImage(file){
   const img=new Image(); const src=URL.createObjectURL(file);
   try{
     img.src=src; await new Promise((res,rej)=>{img.onload=res;img.onerror=()=>rej(new Error('Could not read the selected image.'));});
-    // Keep enough detail for I2V while staying under Replicate's small data-URL limit.
+    // Keep enough detail for I2V while keeping the request comfortably below the server limit.
     let maxW=720,maxH=1280;
     const ratio=img.width/img.height;
     let w=img.width,h=img.height;
@@ -128,38 +128,40 @@ async function createAI(){
   if(!prompt){showError('Please describe the motion you want.');return;}
   button.disabled=true; status.style.display='block'; progress.style.display='block'; bar.style.width='3%';
   try{
-    status.textContent='Preparing image for AI…';
+    status.textContent='Preparing image for the free AI model…';
     const imageData=await compressImage(file);
-    status.textContent='Sending image to AI model…'; bar.style.width='8%';
-    const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:imageData,prompt,aspectRatio:ratioEl.value,resolution:resolutionEl.value==='1080p'?'720p':'480p',duration:5})});
+    status.textContent='Joining the free AI generation queue…'; bar.style.width='8%';
+    const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:imageData,prompt,aspectRatio:ratioEl.value,resolution:resolutionEl.value,duration:Number(durationEl.value)})});
     const raw=await r.text(); let data; try{data=JSON.parse(raw);}catch{throw new Error('Server returned non-JSON data (HTTP '+r.status+'). Please redeploy the latest ZIP.');}
     if(!r.ok || !data.ok) throw new Error(prettyProviderError(data));
-    let id=data.id;
-    if(data.output){return finish(data.output);}
-    status.textContent='AI is generating the video…';
+
+    const id=data.id;
+    status.textContent='Free AI GPU is generating real motion…';
     let finished=false;
-    for(let i=0;i<120;i++){
+    const maxPolls=720; // up to ~36 minutes; the remote service may queue.
+    for(let i=0;i<maxPolls;i++){
       await new Promise(r=>setTimeout(r,3000));
-      const sr=await fetch('/api/generate/'+encodeURIComponent(id),{cache:'no-store'}); const st=await sr.json();
+      const sr=await fetch('/api/generate/'+encodeURIComponent(id),{cache:'no-store'});
+      const rawStatus=await sr.text();
+      let st; try{st=JSON.parse(rawStatus);}catch{throw new Error('Generation server returned non-JSON data (HTTP '+sr.status+').');}
       if(!sr.ok || st.ok===false) throw new Error(prettyProviderError(st));
-      const pct=Math.min(95,10+Math.round((i+1)/120*85)); bar.style.width=pct+'%';
-      status.textContent=st.status==='starting'?'AI model is starting…':st.status==='processing'?'Generating real motion with AI…':'Checking generation…';
+      const pct=Math.min(96,10+Math.round((i+1)/maxPolls*86)); bar.style.width=pct+'%';
+      if(st.status==='queued' || st.status==='starting') status.textContent='Free AI GPU is starting / waiting in queue…';
+      else if(st.status==='processing') status.textContent='Generating real motion with LTX 2.3 AI…';
       if(st.status==='succeeded' && st.output){finish(st.output);finished=true;break;}
-      if(st.status==='failed' || st.status==='canceled'){throw new Error(st.error||('AI generation '+st.status+'.'));}
     }
-    if(!finished) throw new Error('AI generation took too long and was stopped. Please try again.');
-  }catch(e){showError(e.message||'AI video generation failed.');}
+    if(!finished) throw new Error('The free AI service did not finish within the waiting limit. Please try again; no paid service was used.');
+  }catch(e){showError(e.message||'Free AI video generation failed.');}
   finally{button.disabled=false;status.style.display='none';setTimeout(()=>{progress.style.display='none'},400);}
 
   function finish(output){
     const video=document.getElementById('video'),download=document.getElementById('download'),result=document.getElementById('result'),bar=document.getElementById('progressBar');
     const url=typeof output==='string'?output:(output?.url||output?.video||output?.[0]);
-    if(!url) throw new Error('AI provider finished but did not return a video URL.');
+    if(!url) throw new Error('Free AI service finished but did not return a video URL.');
     video.src=url; download.href=url; download.download='faiyaz-gift-ai-video.mp4'; result.style.display='block'; bar.style.width='100%';
     video.scrollIntoView({behavior:'smooth',block:'center'});
   }
 }
-
 async function generate(){await createAI();}
 </script>
 </body>
