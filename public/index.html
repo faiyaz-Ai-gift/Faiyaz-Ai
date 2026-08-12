@@ -117,7 +117,11 @@ function prettyProviderError(data){
   if(!data) return 'The AI provider returned no response.';
   let msg=data.error||data.detail||data.message;
   if(typeof msg==='object') msg=JSON.stringify(msg);
-  return msg || ('Provider request failed (HTTP '+(data.providerStatus||'unknown')+').');
+  if(data.code==='ALL_PROVIDERS_FAILED' && Array.isArray(data.attempts)){
+    const details=data.attempts.filter(x=>x.error).map(x=>'['+x.provider+'] '+x.error).join('\n\n');
+    return 'All configured AI video generators failed.\n\n'+details;
+  }
+  return msg || ('Provider request failed (HTTP '+(data.providerStatus||'unknown').toString()+').');
 }
 
 async function createAI(){
@@ -146,8 +150,9 @@ async function createAI(){
       let st; try{st=JSON.parse(rawStatus);}catch{throw new Error('Generation server returned non-JSON data (HTTP '+sr.status+').');}
       if(!sr.ok || st.ok===false) throw new Error(prettyProviderError(st));
       const pct=Math.min(96,10+Math.round((i+1)/maxPolls*86)); bar.style.width=pct+'%';
-      if(st.status==='queued' || st.status==='starting') status.textContent='Free AI GPU is starting / waiting in queue…';
-      else if(st.status==='processing') status.textContent='Generating real motion with LTX 2.3 AI…';
+      if(st.status==='queued' || st.status==='starting') status.textContent='Starting the first available AI video generator…';
+      else if(st.status==='fallback') status.textContent='One AI generator failed — automatically trying the next available generator…';
+      else if(st.status==='processing') status.textContent='Generating real motion with '+(st.model||'AI video')+'…';
       if(st.status==='succeeded' && st.output){finish(st.output);finished=true;break;}
     }
     if(!finished) throw new Error('The free AI service did not finish within the waiting limit. Please try again; no paid service was used.');
