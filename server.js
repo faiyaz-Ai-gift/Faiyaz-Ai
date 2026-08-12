@@ -8,9 +8,9 @@ const PORT = process.env.PORT || 10000;
 
 // Free public Hugging Face ZeroGPU Space running LTX 2.3 I2V.
 // No FAL key and no Replicate credit are required by this integration.
-const VIDEO_SPACE = process.env.HF_VIDEO_SPACE || 'https://shaundeoOo-ltx-2-3-fast.hf.space';
+const VIDEO_SPACE = (process.env.HF_VIDEO_SPACE || 'https://shaundeooo-ltx-2-3-fast.hf.space').replace(/\/$/, '');
 const HF_TOKEN = process.env.HF_TOKEN || '';
-const MODEL = 'LTX 2.3 I2V (Hugging Face ZeroGPU)';
+const MODEL = 'LTX 2.3 Fast I2V (Hugging Face ZeroGPU)';
 const jobs = new Map();
 
 app.use(cors());
@@ -23,7 +23,7 @@ app.get('/api/health', (_req, res) => {
     service: 'Faiyaz Gift Image-to-Video',
     provider: 'huggingface-zerogpu',
     model: MODEL,
-    aiConfigured: true,
+    aiConfigured: Boolean(VIDEO_SPACE),
     tokenRequired: false,
     fal: false,
     replicate: false,
@@ -32,16 +32,26 @@ app.get('/api/health', (_req, res) => {
 });
 
 function errorText(value) {
-  if (!value) return 'The free AI video service returned an empty error.';
-  if (typeof value === 'string') return value.slice(0, 4000);
-  if (value.error) return errorText(value.error);
-  if (value.message) return errorText(value.message);
-  if (value.detail) return errorText(value.detail);
-  try { return JSON.stringify(value).slice(0, 4000); } catch { return String(value); }
+  if (value === undefined || value === null || value === '') return 'Unknown/empty provider error.';
+  if (typeof value === 'string') return value.slice(0, 12000);
+  if (value.error !== undefined) return errorText(value.error);
+  if (value.detail !== undefined) return errorText(value.detail);
+  if (value.message !== undefined) return errorText(value.message);
+  if (value.exception !== undefined) return errorText(value.exception);
+  try { return JSON.stringify(value).slice(0, 12000); } catch { return String(value); }
+}
+
+function responsePreview(raw) {
+  if (!raw) return 'EMPTY RESPONSE BODY';
+  return raw.replace(/\s+/g, ' ').trim().slice(0, 12000);
 }
 
 function headers() {
-  const h = { 'Content-Type': 'application/json', Accept: 'application/json' };
+  const h = {
+    'Content-Type': 'application/json',
+    Accept: 'application/json, text/plain, */*',
+    'User-Agent': 'Faiyaz-Gift-ImageToVideo/1.1'
+  };
   if (HF_TOKEN) h.Authorization = `Bearer ${HF_TOKEN}`;
   return h;
 }
@@ -57,18 +67,58 @@ function parseSseBlock(block) {
 }
 
 async function consumeSse(url, job) {
-  const r = await fetch(url, { headers: HF_TOKEN ? { Authorization: `Bearer ${HF_TOKEN}` } : {} });
+  const r = await fetch(url, {
+    method: 'GET',
+    headers: {
+      Accept: 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      ...(HF_TOKEN ? { Authorization: `Bearer ${HF_TOKEN}` } : {})
+    }
+  });
+
   const rawContentType = r.headers.get('content-type') || '';
+  const rawStatus = `${r.status} ${r.statusText || ''}`.trim();
   if (!r.ok) {
     const raw = await r.text();
-    throw new Error(`Hugging Face result stream failed (HTTP ${r.status}): ${errorText(raw)}`);
+    throw new Error(`Hugging Face result stream failed (HTTP ${rawStatus}). Provider response: ${responsePreview(raw)}`);
   }
-  if (!r.body) throw new Error('Hugging Face returned no result stream.');
+  if (!r.body) throw new Error(`Hugging Face returned no result stream (HTTP ${rawStatus}, content-type ${rawContentType || 'unknown'}).`);
 
   const reader = r.body.getReader();
   const decoder = new TextDecoder();
   let buffer = '';
+  let lastBlock = '';
   let finalResult = null;
+
+  const handleBlock = (block) => {
+    lastBlock = block;
+    const msg = parseSseBlock(block);
+    if (!msg.data) {
+      if (msg.event === 'error') throw new Error(`Hugging Face emitted an empty error event. Raw SSE block: ${responsePreview(block)}`);
+      return;
+    }
+
+    if (msg.event === 'generating' || msg.event === 'heartbeat' || msg.event === 'process_starts' || msg.event === 'process_generating') {
+      job.status = 'processing';
+      return;
+    }
+    if (msg.event === 'error' || msg.event === 'failed') {
+      let parsed = msg.data;
+      try { parsed = JSON.parse(msg.data); } catch {}
+      throw new Error(`Hugging Face generation error: ${errorText(parsed)}${msg.data ? ` | Raw event: ${responsePreview(msg.data)}` : ` | Raw SSE block: ${responsePreview(block)}`}`);
+    }
+    if (msg.event === 'complete' || msg.event === 'done') {
+      try {
+        let parsed = JSON.parse(msg.data);
+        if (typeof parsed === 'string') {
+          try { parsed = JSON.parse(parsed); } catch {}
+        }
+        finalResult = parsed;
+      } catch (e) {
+        throw new Error(`Invalid JSON in Hugging Face completion event: ${responsePreview(msg.data)}`);
+      }
+    }
+  };
 
   while (true) {
     const { value, done } = await reader.read();
@@ -79,75 +129,76 @@ async function consumeSse(url, job) {
     while ((split = buffer.search(/\r?\n\r?\n/)) !== -1) {
       const block = buffer.slice(0, split);
       buffer = buffer.slice(split).replace(/^\r?\n\r?\n/, '');
-      const msg = parseSseBlock(block);
-      if (!msg.data) continue;
-
-      if (msg.event === 'generating' || msg.event === 'heartbeat') {
-        job.status = 'processing';
-        continue;
-      }
-      if (msg.event === 'error') {
-        let parsed = msg.data;
-        try { parsed = JSON.parse(msg.data); } catch {}
-        throw new Error(errorText(parsed));
-      }
-      if (msg.event === 'complete') {
-        try { finalResult = JSON.parse(msg.data); }
-        catch { throw new Error(`Invalid JSON in Hugging Face completion: ${msg.data.slice(0, 2000)}`); }
-        return finalResult;
-      }
+      handleBlock(block);
+      if (finalResult !== null) return finalResult;
     }
   }
 
-  // Some proxies omit the final blank line; process the remaining block.
   if (buffer.trim()) {
-    const msg = parseSseBlock(buffer);
-    if (msg.event === 'complete' && msg.data) {
-      try { return JSON.parse(msg.data); } catch {}
-    }
+    handleBlock(buffer.trim());
+    if (finalResult !== null) return finalResult;
   }
 
-  if (finalResult) return finalResult;
-  throw new Error(`Hugging Face closed the result stream without a complete event (${rawContentType || 'unknown content type'}).`);
+  throw new Error(`Hugging Face closed the result stream without a complete event. Content-Type: ${rawContentType || 'unknown'}. Last SSE block: ${responsePreview(lastBlock)}`);
 }
 
 async function runRemoteJob(job, input) {
   try {
     job.status = 'starting';
-    const start = await fetch(`${VIDEO_SPACE}/gradio_api/call/generate`, {
-      method: 'POST',
-      headers: headers(),
-      body: JSON.stringify({ data: [
-        input.image,
-        input.prompt,
-        input.negativePrompt,
-        input.resolution,
-        input.duration,
-        -1,
-        'video/h264-mp4',
-        false
-      ] })
-    });
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 45000);
+    let start;
+    try {
+      start = await fetch(`${VIDEO_SPACE}/gradio_api/call/generate`, {
+        method: 'POST',
+        headers: headers(),
+        body: JSON.stringify({ data: [
+          input.image,
+          input.prompt,
+          input.negativePrompt,
+          input.resolution,
+          input.duration,
+          -1,
+          'video/h264-mp4',
+          false
+        ] }),
+        signal: controller.signal
+      });
+    } finally {
+      clearTimeout(timer);
+    }
 
     const startRaw = await start.text();
-    let startData;
-    try { startData = JSON.parse(startRaw); } catch { startData = null; }
+    let startData = null;
+    try { startData = JSON.parse(startRaw); } catch {}
+
     if (!start.ok) {
-      throw new Error(`Hugging Face could not start the free generation (HTTP ${start.status}): ${errorText(startData || startRaw)}`);
+      throw new Error(`Hugging Face could not start the free generation (HTTP ${start.status}). Provider response: ${responsePreview(startRaw)}`);
     }
     if (!startData?.event_id) {
-      throw new Error(`Hugging Face did not return an event ID: ${startRaw.slice(0, 3000)}`);
+      // Gradio normally returns {event_id}. If it ever returns an error JSON,
+      // surface that exact payload instead of the old generic/null message.
+      throw new Error(`Hugging Face did not return an event ID. HTTP ${start.status}; Content-Type: ${start.headers.get('content-type') || 'unknown'}; Provider response: ${responsePreview(startRaw)}`);
     }
 
     job.remoteEventId = startData.event_id;
     job.status = 'processing';
-    const result = await consumeSse(`${VIDEO_SPACE}/gradio_api/call/generate/${encodeURIComponent(startData.event_id)}`, job);
 
-    // submit() returns: {video:{url,...}, seed, prompt}
+    const result = await consumeSse(
+      `${VIDEO_SPACE}/gradio_api/call/generate/${encodeURIComponent(startData.event_id)}`,
+      job
+    );
+
+    // ShaundeOoO/ltx-2.3-fast returns:
+    // { video: { url, content_type, ... }, seed, prompt }
     const payload = Array.isArray(result) ? result[0] : result;
     const video = payload?.video || payload?.output?.video || payload?.output;
     const url = typeof video === 'string' ? video : video?.url;
-    if (!url) throw new Error(`Free AI service completed but returned no video URL. Response: ${JSON.stringify(result).slice(0, 4000)}`);
+
+    if (!url) {
+      throw new Error(`Free AI service completed but returned no video URL. Exact provider response: ${responsePreview(JSON.stringify(result))}`);
+    }
 
     job.status = 'succeeded';
     job.output = url;
@@ -156,9 +207,13 @@ async function runRemoteJob(job, input) {
     job.model = MODEL;
     job.finishedAt = Date.now();
   } catch (e) {
+    const msg = e?.name === 'AbortError'
+      ? 'Hugging Face start request timed out after 45 seconds.'
+      : (e?.message || String(e));
     job.status = 'failed';
-    job.error = e?.message || String(e);
+    job.error = msg;
     job.finishedAt = Date.now();
+    console.error(`[job ${job.id}] ${msg}`);
   }
 }
 
