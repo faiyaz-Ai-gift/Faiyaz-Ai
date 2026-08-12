@@ -13,15 +13,79 @@ const HF_VIDEO_SPACE = process.env.HF_VIDEO_SPACE || '';
 
 // Provider order can be changed without touching the frontend.
 // A provider is skipped automatically when its required server-side key is absent.
-const PROVIDERS = [
-  { id: 'fal-ltx23', name: 'FAL · LTX 2.3', type: 'fal', model: 'fal-ai/ltx-2.3/image-to-video' },
+const BASE_PROVIDERS = [
   { id: 'fal-kling3', name: 'FAL · Kling 3.0 Pro', type: 'fal', model: 'fal-ai/kling-video/v3/pro/image-to-video' },
-  { id: 'fal-wan21', name: 'FAL · Wan 2.1 I2V', type: 'fal', model: 'fal-ai/wan-i2v' },
+  { id: 'fal-kling3-standard', name: 'FAL · Kling 3.0 Standard', type: 'fal', model: 'fal-ai/kling-video/v3/standard/image-to-video' },
+  { id: 'fal-kling26', name: 'FAL · Kling 2.6 Pro', type: 'fal', model: 'fal-ai/kling-video/v2.6/pro/image-to-video' },
+  { id: 'fal-kling16', name: 'FAL · Kling 1.6 Pro', type: 'fal', model: 'fal-ai/kling-video/v1.6/pro/image-to-video' },
+  { id: 'fal-wan27', name: 'FAL · Wan 2.7 I2V', type: 'fal', model: 'fal-ai/wan/v2.7/image-to-video' },
+  { id: 'fal-wanpro', name: 'FAL · Wan 2.1 Pro I2V', type: 'fal', model: 'fal-ai/wan-pro/image-to-video' },
+  { id: 'fal-ltx23', name: 'FAL · LTX 2.3 I2V', type: 'fal', model: 'fal-ai/ltx-2.3/image-to-video' },
   { id: 'fal-pika22', name: 'FAL · Pika 2.2', type: 'fal', model: 'fal-ai/pika/v2.2/image-to-video' },
-  { id: 'fal-svd', name: 'FAL · Stable Video Diffusion', type: 'fal', model: 'fal-ai/stable-video' },
-  { id: 'replicate-ltx23', name: 'Replicate · LTX 2.3 Pro', type: 'replicate', model: 'lightricks/ltx-2.3-pro' },
-  { id: 'replicate-wan21', name: 'Replicate · Wan 2.1 I2V', type: 'replicate', model: 'wavespeedai/wan-2.1-i2v-480p' },
-  { id: 'replicate-svd', name: 'Replicate · Stable Video Diffusion', type: 'replicate', model: 'christophy/stable-video-diffusion' },
+  { id: 'fal-svd', name: 'FAL · Stable Video Diffusion', type: 'fal', model: 'fal-ai/stable-video' }
+];
+
+// Verified image-to-video models currently listed in Replicate's I2V collection.
+// They are optional: the router only enables this larger catalog when
+// ENABLE_REPLICATE_CATALOG=true, so a single key cannot unexpectedly burn credits
+// by trying dozens of paid models after the preferred models fail.
+const REPLICATE_CATALOG = [
+  ['replicate-kling-v3','Replicate · Kling Video 3.0','kwaivgi/kling-v3-video'],
+  ['replicate-kling-v3-omni','Replicate · Kling Video 3.0 Omni','kwaivgi/kling-v3-omni-video'],
+  ['replicate-veo31-fast','Replicate · Veo 3.1 Fast','google/veo-3.1-fast'],
+  ['replicate-veo31','Replicate · Veo 3.1','google/veo-3.1'],
+  ['replicate-runway45','Replicate · Runway Gen-4.5','runwayml/gen-4.5'],
+  ['replicate-seedance20','Replicate · Seedance 2.0','bytedance/seedance-2.0'],
+  ['replicate-seedance20-fast','Replicate · Seedance 2.0 Fast','bytedance/seedance-2.0-fast'],
+  ['replicate-seedance15','Replicate · Seedance 1.5 Pro','bytedance/seedance-1.5-pro'],
+  ['replicate-seedance1','Replicate · Seedance 1 Pro','bytedance/seedance-1-pro'],
+  ['replicate-seedance1-fast','Replicate · Seedance 1 Pro Fast','bytedance/seedance-1-pro-fast'],
+  ['replicate-seedance1-lite','Replicate · Seedance 1 Lite','bytedance/seedance-1-lite'],
+  ['replicate-grok-imagine','Replicate · Grok Imagine Video','xai/grok-imagine-video'],
+  ['replicate-happyhorse11','Replicate · Happy Horse 1.1','alibaba/happyhorse-1.1'],
+  ['replicate-happyhorse10','Replicate · Happy Horse 1.0','alibaba/happyhorse-1.0'],
+  ['replicate-luma-ray32','Replicate · Luma Ray 3.2','luma/ray-3.2'],
+  ['replicate-luma-ray2-720','Replicate · Luma Ray 2 720p','luma/ray-2-720p'],
+  ['replicate-luma-ray2-540','Replicate · Luma Ray 2 540p','luma/ray-2-540p'],
+  ['replicate-luma-rayflash2-720','Replicate · Luma Ray Flash 2 720p','luma/ray-flash-2-720p'],
+  ['replicate-luma-rayflash2-540','Replicate · Luma Ray Flash 2 540p','luma/ray-flash-2-540p'],
+  ['replicate-wan27-i2v','Replicate · Wan 2.7 I2V','wan-video/wan-2.7-i2v'],
+  ['replicate-wan27-r2v','Replicate · Wan 2.7 R2V','wan-video/wan-2.7-r2v'],
+  ['replicate-wan25-i2v','Replicate · Wan 2.5 I2V','wan-video/wan-2.5-i2v'],
+  ['replicate-wan25-i2v-fast','Replicate · Wan 2.5 I2V Fast','wan-video/wan-2.5-i2v-fast'],
+  ['replicate-wan22-i2v-fast','Replicate · Wan 2.2 I2V Fast','wan-video/wan-2.2-i2v-fast'],
+  ['replicate-wan21-i2v-720','Replicate · Wan 2.1 I2V 720p','wavespeedai/wan-2.1-i2v-720p'],
+  ['replicate-wan21-i2v-480','Replicate · Wan 2.1 I2V 480p','wavespeedai/wan-2.1-i2v-480p'],
+  ['replicate-vidu-q3','Replicate · Vidu Q3 Pro','vidu/q3-pro'],
+  ['replicate-kling25','Replicate · Kling 2.5 Turbo Pro','kwaivgi/kling-v2.5-turbo-pro'],
+  ['replicate-kling21','Replicate · Kling 2.1','kwaivgi/kling-v2.1'],
+  ['replicate-kling21-master','Replicate · Kling 2.1 Master','kwaivgi/kling-v2.1-master'],
+  ['replicate-kling20','Replicate · Kling 2.0','kwaivgi/kling-v2.0'],
+  ['replicate-kling16-pro','Replicate · Kling 1.6 Pro','kwaivgi/kling-v1.6-pro'],
+  ['replicate-kling16-standard','Replicate · Kling 1.6 Standard','kwaivgi/kling-v1.6-standard'],
+  ['replicate-minimax-hailuo23','Replicate · Hailuo 2.3','minimax/hailuo-2.3'],
+  ['replicate-minimax-hailuo23-fast','Replicate · Hailuo 2.3 Fast','minimax/hailuo-2.3-fast'],
+  ['replicate-minimax-hailuo02','Replicate · Hailuo 02','minimax/hailuo-02'],
+  ['replicate-minimax-video01','Replicate · MiniMax Video-01','minimax/video-01'],
+  ['replicate-minimax-video01-director','Replicate · MiniMax Video-01 Director','minimax/video-01-director'],
+  ['replicate-minimax-video01-live','Replicate · MiniMax Video-01 Live','minimax/video-01-live'],
+  ['replicate-leonardo-motion20','Replicate · Leonardo Motion 2.0','leonardoai/motion-2.0'],
+  ['replicate-pruna-pvideo','Replicate · Pruna P-Video','prunaai/p-video'],
+  ['replicate-pruna-pvideo-animate','Replicate · Pruna P-Video Animate','prunaai/p-video-animate'],
+  ['replicate-veo3','Replicate · Veo 3','google/veo-3'],
+  ['replicate-veo3-fast','Replicate · Veo 3 Fast','google/veo-3-fast'],
+  ['replicate-veo2','Replicate · Veo 2','google/veo-2'],
+  ['replicate-ltx23','Replicate · LTX 2.3 Pro','lightricks/ltx-2.3-pro'],
+  ['replicate-wan21-i2v','Replicate · Wan 2.1 I2V','wavespeedai/wan-2.1-i2v-480p'],
+  ['replicate-svd','Replicate · Stable Video Diffusion','christophy/stable-video-diffusion']
+].map(([id,name,model]) => ({ id, name, type:'replicate', model, catalog:true }));
+
+const PROVIDERS = [
+  ...BASE_PROVIDERS,
+  { id: 'replicate-ltx23-preferred', name: 'Replicate · LTX 2.3 Pro', type: 'replicate', model: 'lightricks/ltx-2.3-pro' },
+  { id: 'replicate-wan21-preferred', name: 'Replicate · Wan 2.1 I2V 480p', type: 'replicate', model: 'wavespeedai/wan-2.1-i2v-480p' },
+  { id: 'replicate-svd-preferred', name: 'Replicate · Stable Video Diffusion', type: 'replicate', model: 'christophy/stable-video-diffusion' },
+  ...(process.env.ENABLE_REPLICATE_CATALOG === 'true' ? REPLICATE_CATALOG : []),
   ...(HF_VIDEO_SPACE ? [{ id: 'hf-space', name: 'Hugging Face Space', type: 'hf-space', model: HF_VIDEO_SPACE }] : [])
 ];
 
@@ -54,7 +118,9 @@ app.get('/api/health', (_req, res) => {
     service: 'Faiyaz Gift Image-to-Video',
     mode: 'multi-provider-fallback',
     providers: PROVIDERS.map(p => ({ id: p.id, name: p.name, model: p.model, configured: configured(p) })),
-    configuredCount: PROVIDERS.filter(configured).length
+    configuredCount: PROVIDERS.filter(configured).length,
+    catalogEnabled: process.env.ENABLE_REPLICATE_CATALOG === 'true',
+    catalogCount: REPLICATE_CATALOG.length
   });
 });
 
@@ -67,9 +133,14 @@ function falInput(provider, input) {
   };
   switch (provider.id) {
     case 'fal-kling3':
-      return { ...base, start_image_url: input.image, duration: String(Math.min(Math.max(input.duration, 3), 15)), generate_audio: false };
-    case 'fal-wan21':
-      return { image_url: input.image, prompt: input.prompt };
+    case 'fal-kling3-standard':
+    case 'fal-kling26':
+    case 'fal-kling16':
+      return { ...base, start_image_url: input.image, duration: String(Math.min(Math.max(input.duration, 5), 10)), generate_audio: false };
+    case 'fal-wan27':
+      return { prompt: input.prompt, image_url: input.image, duration: String(Math.min(Math.max(input.duration, 5), 10)), resolution: input.resolution === '1080p' ? '1080p' : '720p' };
+    case 'fal-wanpro':
+      return { prompt: input.prompt, image_url: input.image };
     case 'fal-pika22':
       return { ...base, image_url: input.image, duration: Math.min(Math.max(input.duration, 5), 10), resolution: input.resolution };
     case 'fal-svd':
@@ -92,44 +163,58 @@ async function runFal(provider, input) {
   return { url, meta: data, requestId: result?.requestId || null };
 }
 
+async function getReplicateSchema(model) {
+  const r = await fetch(`https://api.replicate.com/v1/models/${model}`, {
+    headers: { Authorization: `Bearer ${REPLICATE_API_TOKEN}` }
+  });
+  const raw = await r.text();
+  let data; try { data = JSON.parse(raw); } catch { data = null; }
+  if (!r.ok) throw new Error(`Replicate model schema failed (HTTP ${r.status}): ${errorText(data || raw)}`);
+  return data?.latest_version?.openapi_schema || data?.openapi_schema || null;
+}
+
+function schemaInput(schema, input) {
+  const props = schema?.components?.schemas?.Input?.properties || schema?.components?.schemas?.InputSchema?.properties || {};
+  const keys = Object.keys(props);
+  const out = {};
+  const find = (...names) => keys.find(k => names.includes(k)) || keys.find(k => names.some(n => k.toLowerCase() === n.toLowerCase()));
+  const imageKey = find('image','input_image','image_url','start_image_url','first_frame_image','first_frame','init_image','reference_image','img');
+  const promptKey = find('prompt','text_prompt','positive_prompt','description');
+  const negKey = find('negative_prompt','negativePrompt','negative');
+  const durationKey = find('duration','video_length','num_frames');
+  const ratioKey = find('aspect_ratio','aspect');
+  const resolutionKey = find('resolution','output_resolution');
+  if (imageKey) out[imageKey] = input.image;
+  if (promptKey) out[promptKey] = input.prompt;
+  if (negKey) out[negKey] = input.negativePrompt;
+  if (ratioKey) out[ratioKey] = input.aspectRatio;
+  if (resolutionKey) out[resolutionKey] = input.resolution;
+  if (durationKey && durationKey !== 'num_frames') out[durationKey] = input.duration >= 10 ? 10 : 5;
+  if (durationKey === 'num_frames') out[durationKey] = input.duration >= 10 ? 25 : 14;
+  if (!imageKey) throw new Error(`Replicate model ${schema?.info?.title || 'model'} does not expose a recognized image input field.`);
+  return out;
+}
+
 function replicateInput(provider, input) {
-  if (provider.id === 'replicate-ltx23') {
-    return {
-      task: 'image_to_video',
-      prompt: input.prompt,
-      image: input.image,
-      resolution: input.resolution === '1080p' ? '1080p' : '1080p',
-      duration: input.duration >= 10 ? '10' : '6',
-      aspect_ratio: input.aspectRatio === '9:16' ? '9:16' : '16:9',
-      fps: 25,
-      camera_motion: 'none',
-      generate_audio: false
-    };
+  // Known schemas get explicit inputs; catalog models use their live Replicate schema.
+  if (provider.id.includes('wan21') || provider.model.includes('wan-2.1-i2v')) {
+    return { image: input.image, prompt: input.prompt, aspect_ratio: input.aspectRatio, negative_prompt: input.negativePrompt };
   }
-  if (provider.id === 'replicate-wan21') {
-    return {
-      image: input.image,
-      prompt: input.prompt,
-      fast_mode: 'Balanced',
-      lora_scale: 1,
-      aspect_ratio: input.aspectRatio,
-      sample_shift: 3,
-      sample_steps: 30,
-      negative_prompt: input.negativePrompt,
-      sample_guide_scale: 5
-    };
+  if (provider.id.includes('svd')) {
+    return { input_image: input.image, video_length: input.duration >= 10 ? '25_frames_with_svd_xt' : '14_frames_with_svd', sizing_strategy: 'maintain_aspect_ratio', frames_per_second: 8, motion_bucket_id: 180, cond_aug: 0.02 };
   }
-  return {
-    input_image: input.image,
-    video_length: input.duration >= 10 ? '25_frames_with_svd_xt' : '14_frames_with_svd',
-    sizing_strategy: 'maintain_aspect_ratio',
-    frames_per_second: 8,
-    motion_bucket_id: 180,
-    cond_aug: 0.02
-  };
+  if (provider.id.includes('ltx23')) {
+    return { image: input.image, prompt: input.prompt, resolution: input.resolution === '1080p' ? '1080p' : '720p', duration: input.duration >= 10 ? '10' : '6', aspect_ratio: input.aspectRatio, fps: 25, camera_motion: 'none', generate_audio: false };
+  }
+  return null;
 }
 
 async function runReplicate(provider, input) {
+  let mapped = replicateInput(provider, input);
+  if (!mapped) {
+    const schema = await getReplicateSchema(provider.model);
+    mapped = schemaInput(schema, input);
+  }
   const r = await fetch(`https://api.replicate.com/v1/models/${provider.model}/predictions`, {
     method: 'POST',
     headers: {
@@ -137,7 +222,7 @@ async function runReplicate(provider, input) {
       'Content-Type': 'application/json',
       Prefer: 'wait=10'
     },
-    body: JSON.stringify({ input: replicateInput(provider, input) })
+    body: JSON.stringify({ input: mapped })
   });
   const raw = await r.text();
   let data; try { data = JSON.parse(raw); } catch { data = null; }
@@ -213,6 +298,7 @@ async function runWithFallback(job, input) {
     job.provider = provider.id;
     job.model = provider.model;
     job.status = 'starting';
+    job.providerStartedAt = Date.now();
     try {
       const result = await runProvider(provider, job, input);
       job.status = 'succeeded';
@@ -225,7 +311,7 @@ async function runWithFallback(job, input) {
       job.finishedAt = Date.now();
       return;
     } catch (e) {
-      attempts.push({ provider: provider.name, error: e?.message || String(e) });
+      attempts.push({ provider: provider.name, model: provider.model, error: e?.message || String(e), elapsedMs: job.providerStartedAt ? Date.now() - job.providerStartedAt : null });
       job.status = 'fallback';
       job.error = `${provider.name}: ${e?.message || String(e)}`;
     }
@@ -241,7 +327,7 @@ app.post('/api/generate', async (req, res) => {
   if (!image || typeof image !== 'string' || !image.startsWith('data:image/')) return res.status(400).json({ ok: false, code: 'INVALID_IMAGE', error: 'A valid image data URL is required.' });
   if (image.length > 500000) return res.status(413).json({ ok: false, code: 'IMAGE_TOO_LARGE', error: 'Compressed image is still too large. Please choose a smaller image.' });
   if (!prompt || typeof prompt !== 'string') return res.status(400).json({ ok: false, code: 'INVALID_PROMPT', error: 'A motion prompt is required.' });
-  if (!PROVIDERS.some(configured)) return res.status(503).json({ ok: false, code: 'NO_PROVIDER_CONFIGURED', error: 'No video-generation API is configured. Add FAL_KEY or REPLICATE_API_TOKEN in Render Environment Variables.' });
+  if (!PROVIDERS.some(configured)) return res.status(503).json({ ok: false, code: 'NO_PROVIDER_CONFIGURED', error: 'No video-generation API is configured. Add FAL_KEY or REPLICATE_API_TOKEN in Render Environment Variables. For the large Replicate catalog, also set ENABLE_REPLICATE_CATALOG=true.' });
 
   const id = crypto.randomUUID();
   const job = { id, status: 'queued', output: null, error: null, createdAt: Date.now(), provider: null, model: null, attempts: [] };
