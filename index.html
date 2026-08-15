@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<title>ZEVQORA — Home Delivery</title>
+<style>
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+:root{--bg:#050509;--card:#101016;--line:#292933;--purple:#9d38ff;--purple2:#7018c9;--text:#f8f7fb;--muted:#a6a3ae;--green:#48d65b}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif;padding-bottom:76px}
+button,input{font:inherit}button{cursor:pointer}
+.app{width:min(1180px,94%);margin:auto}
+.header{height:74px;background:#050509;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20}
+.logo{font-size:24px;font-weight:900;letter-spacing:3px}.logo span{color:var(--purple)}
+.headIcon{border:0;background:none;color:#fff;font-size:26px}.headRight{display:flex;align-items:center;gap:22px}.cart{position:relative}.badge{position:absolute;right:-9px;top:-8px;background:var(--purple);font-size:11px;padding:3px 7px;border-radius:20px}
+.ai{border:2px solid var(--purple);border-radius:20px;padding:12px 15px;display:flex;align-items:center;gap:12px;box-shadow:0 0 20px #8b24ff33}
+.bot{width:55px;height:55px;border-radius:50%;display:grid;place-items:center;font-size:29px;background:radial-gradient(circle,#d478ff,#5110a1);box-shadow:0 0 22px #a631ff88}
+.aiText{flex:1}.aiTitle{font-size:16px}.aiTry{color:#a9a5b0;font-size:11px;margin-top:5px}.mic{border:0;background:var(--purple);color:#fff;width:50px;height:50px;border-radius:50%;font-size:22px}
+.tools{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:13px}.tool{background:#0d0d13;border:1px solid #292933;color:#eee;border-radius:12px;padding:11px 6px;font-size:13px}.tool span{font-size:19px;margin-right:7px}
+.hero{margin-top:17px;border:1px solid #30303b;border-radius:18px;min-height:273px;position:relative;overflow:hidden;background:radial-gradient(circle at 66% 50%,#551080,#0a0710 54%,#06060a)}
+.heroContent{position:relative;z-index:2;padding:28px 25px;width:54%}.hero h1{font-size:30px;line-height:1;margin:0 0 15px}.hero p{color:#d2cfd8;line-height:1.4;margin:0}.yellow{color:#ffd800}.sale{position:absolute;right:17px;top:24px;background:#ffd91b;color:#070707;border-radius:50%;width:88px;height:88px;display:grid;place-items:center;text-align:center;font-size:16px;font-weight:900;z-index:3}.heroProduct{position:absolute;right:6%;bottom:10px;width:48%;height:210px;display:grid;place-items:center;font-size:130px;filter:drop-shadow(0 18px 25px #000)}
+.timer{display:flex;gap:8px;margin-top:18px}.timeBox{background:#5f0fc0;border-radius:5px;padding:7px 10px;text-align:center;font-weight:900}.timeBox small{display:block;color:#bbb;margin-top:3px;font-size:8px;font-weight:500}
+.sold{position:absolute;right:24px;bottom:28px;font-size:12px;color:#ddd}.bar{height:5px;width:100px;background:#ddd;border-radius:10px;margin-top:7px}.bar i{display:block;width:37%;height:100%;background:var(--purple);border-radius:10px}
+.section{margin-top:27px}.sectionHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.sectionHead h2{font-size:17px;margin:0}.view{border:0;background:none;color:#bd58ff;font-size:12px}.products{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px}.products::-webkit-scrollbar,.cats::-webkit-scrollbar{display:none}.product{min-width:165px;max-width:180px;background:var(--card);border:1px solid #25252f;border-radius:14px;overflow:hidden;position:relative}.productImg{height:174px;background:#eee;position:relative;display:flex;align-items:center;justify-content:center}.productImg img{width:100%;height:100%;object-fit:cover}.heart{position:absolute;right:8px;top:8px;border:0;background:var(--purple);color:#fff;border-radius:50%;width:30px;height:30px}.rating{position:absolute;left:8px;bottom:8px;background:#138b39;color:white;border-radius:10px;padding:4px 7px;font-size:11px}.pbody{padding:9px}.pbody h3{font-size:13px;margin:3px 0 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.price{font-weight:900}.old{font-size:11px;color:#777;text-decoration:line-through;margin-left:4px}.off{font-size:11px;color:#53df49;margin-top:5px}.add{width:100%;border:0;background:#7e22cf;color:#fff;border-radius:7px;padding:8px;margin-top:8px;font-size:12px;font-weight:700}
+.cats{display:flex;gap:14px;overflow-x:auto}.cat{min-width:105px;text-align:center;border:0;background:none;color:#fff}.catImg{height:94px;border-radius:18px;display:grid;place-items:center;font-size:42px;border:1px solid #333;background:linear-gradient(145deg,#21102d,#15151d)}.cat:nth-child(1) .catImg{background:#4d315e}.cat:nth-child(2) .catImg{background:#31526c}.cat:nth-child(3) .catImg{background:#4d4035}.cat:nth-child(4) .catImg{background:#684b52}.cat:nth-child(5) .catImg{background:#3d6655}.cat:nth-child(6) .catImg{background:linear-gradient(135deg,#ff4d86,#7f7aff)}.cat label{display:block;margin-top:7px;font-size:11px}
+.mystery{margin-top:22px;border:1px solid #30283a;border-radius:16px;min-height:155px;padding:22px 24px;background:radial-gradient(circle at 50%,#45086e,#0c0910 62%);display:flex;align-items:center;justify-content:space-between;overflow:hidden}.mystery h2{font-size:27px;line-height:.95;margin:0;color:#ffd51b}.mystery p{font-size:12px;line-height:1.4}.box{font-size:80px;filter:drop-shadow(0 0 22px #a22fff)}.explore{text-align:right}.explore small{color:#aaa}.explore b{display:block;font-size:21px;color:#ffd51b;margin:3px 0 8px}.explore button{background:#a43bff;color:#fff;border:0;border-radius:7px;padding:11px 14px;font-weight:800}
+.perks{margin-top:12px;border:1px solid #2b2b35;border-radius:14px;padding:15px 8px;display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.perk{text-align:center;font-size:12px}.perk b{display:block;font-size:23px;margin-bottom:5px}.perk:nth-child(1) b{color:#4bd9df}.perk:nth-child(2) b{color:#6cdf36}.perk:nth-child(3) b{color:#ff7b22}.perk:nth-child(4) b{color:#9e66ff}
+.bottom{position:fixed;bottom:0;left:0;right:0;height:74px;background:#111118;border-top:1px solid #292932;display:grid;grid-template-columns:repeat(5,1fr);z-index:30;padding-bottom:env(safe-area-inset-bottom)}.bottom button{border:0;background:none;color:#aaa;font-size:11px}.bottom button b{display:block;font-size:24px;margin-bottom:3px}.bottom .active{color:#b63fff}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.78);display:none;align-items:flex-end;justify-content:center;z-index:100;padding:14px}
+.modal.show{display:flex}
+.modalBox{width:min(100%,620px);background:#111119;border:1px solid #3a3a46;border-radius:22px;padding:20px;box-shadow:0 0 30px #8e20ff33;max-height:82vh;overflow:auto}
+.modalTop{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+.modalTitle{font-size:20px;font-weight:700}.close{background:#25252d;border:0;border-radius:50%;width:36px;height:36px;font-size:20px}
+.modalInput{width:100%;padding:14px;border-radius:12px;border:1px solid #383844;background:#08080d;color:#fff;outline:none;margin:8px 0}
+.modalBtn{width:100%;padding:13px;border:0;border-radius:12px;background:#9a2cff;color:#fff;font-weight:700;margin-top:9px}
+.productDetail{display:grid;grid-template-columns:120px 1fr;gap:15px;align-items:center}.productDetail img{width:120px;height:120px;border-radius:14px;object-fit:cover;background:#222}
+.detailPrice{font-size:22px;font-weight:800}.detailOld{text-decoration:line-through;color:#777;font-size:13px;margin-left:7px}.detailOff{color:#4fe24f;font-size:13px;margin-top:5px}
+.menuList button{display:block;width:100%;padding:15px;text-align:left;background:none;border:0;border-bottom:1px solid #282832;color:#eee}
+.toast{position:fixed;left:50%;bottom:92px;transform:translate(-50%,20px);background:#25252e;border:1px solid #555;padding:12px 18px;border-radius:10px;opacity:0;pointer-events:none;transition:.2s;z-index:50}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(min-width:850px){body{padding-bottom:0}.bottom{display:none}.header{height:84px}}
+@media(max-width:560px){.app{width:94%}.header{height:66px}.logo{font-size:23px}.headRight{gap:14px}.aiTitle{font-size:17px}.hero{min-height:265px}.heroContent{width:58%;padding:27px 20px}.hero h1{font-size:26px}.heroProduct{font-size:100px;right:-2%}.sale{width:72px;height:72px;font-size:13px;right:8px}.sold{right:15px}.mystery{min-height:155px;padding:18px}.box{font-size:58px}.mystery h2{font-size:27px}.explore b{font-size:21px}.perks{grid-template-columns:repeat(4,1fr)}.perk{font-size:9px}.perk b{font-size:19px}.product{min-width:164px}}
+
+.catalogTools{display:flex;gap:8px;margin:10px 0}
+.catalogSearch,.catalogSelect{background:#111118;color:#eee;border:1px solid #343442;border-radius:10px;padding:10px;outline:none}
+.catalogSearch{flex:1}.catalogSelect{width:125px}
+.catalogNote{font-size:10px;color:#777;margin:5px 0 10px;line-height:1.4}
+.loadMore{display:block;margin:12px auto 20px;padding:12px 22px;border:1px solid #8e2cff;background:#17131f;color:#fff;border-radius:12px}
+</style>
+
+<style id="zevqora-gallery-css">
+.productGallery{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.galleryMain{position:relative;width:100%;height:360px;border-radius:18px;overflow:hidden;background:#0b0b0f;display:flex;align-items:center;justify-content:center}
+.galleryMain img{width:100%;height:100%;object-fit:contain;display:block;background:#0b0b0f;cursor:zoom-in}
+.galleryBadge{position:absolute;left:12px;top:12px;background:rgba(0,0,0,.65);padding:7px 10px;border-radius:999px;font-size:12px}
+
+
+</style>
+
+<style id="zevqora-full-photo-css">
+#zevqoraPhotoLightbox{display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.94);align-items:center;justify-content:center;padding:18px}
+#zevqoraPhotoLightbox img{max-width:100%;max-height:92vh;width:auto;height:auto;object-fit:contain;border-radius:10px}
+#zevqoraPhotoLightbox .lbClose{position:absolute;right:18px;top:18px;width:46px;height:46px;border:0;border-radius:50%;background:#25252d;color:#fff;font-size:28px;cursor:pointer}
+#zevqoraPhotoLightbox .lbHint{position:absolute;bottom:14px;left:0;right:0;text-align:center;color:#bbb;font-size:12px}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="header">
+<button class="headIcon" id="menuBtn" aria-label="Menu" onclick="openMenu()">☰</button>
+<div class="logo">ZEV<span>QORA</span></div>
+<div class="headRight"><button class="headIcon cart" onclick="showCart()">🛒<i class="badge" id="cartCount">0</i></button><button class="headIcon" onclick="showToast('Profile section')">♙</button></div>
+</header>
+
+<section class="ai" id="aiSearch">
+<div class="bot">🤖</div>
+<div class="aiText" onclick="openSearch()"><div class="aiTitle">Ask Zevqora anything...</div><div class="aiTry">Try: “₹1500 ke andar birthday gift chahiye”</div></div>
+<button class="mic" onclick="startVoice()">🎙</button>
+</section>
+
+<div class="tools">
+<button class="tool" onclick="photoSearch()">📷 Search by Photo</button>
+<button class="tool" onclick="startVoice()">🎚 Voice Search</button>
+<button class="tool" onclick="scanCode()">▣ Scan QR / BarCode</button>
+</div>
+
+<section class="hero" id="drops">
+<div class="heroContent">
+<h1>⚡ <span class="yellow">TODAY'S<br>DROPS</span></h1>
+<p>Limited time.<br>Unbeatable deals.</p>
+<div class="timer"><div><span class="timeBox" id="hh">02</span><small>HRS</small></div><div><span class="timeBox" id="mm">41</span><small>MINS</small></div><div><span class="timeBox" id="ss">18</span><small>SECS</small></div></div>
+</div>
+<div class="sale">FLAT<br>60%<br>OFF</div>
+<div class="heroProduct">🎧</div>
+<div class="sold">37 sold<br>of 100<div class="bar"><i></i></div></div>
+</section>
+
+<div id="activeCategoryLabel" style="margin:8px 0 14px;font-weight:700;font-size:18px"></div><div class="catalogNote">Product photos are now kept strictly tied to each product. No unrelated category photos are inserted. Tap the photo to view it full-screen.</div><section class="section" id="catalogControls">
+  <div class="catalogTools">
+    <input class="catalogSearch" id="catalogSearch" placeholder="Search products..." oninput="filterProducts()">
+    <select class="catalogSelect" id="catalogCategory" onchange="filterProducts()">
+      <option>All</option>
+      <option>Fashion</option>
+      <option>Electronics</option>
+      <option>Home</option>
+      <option>Beauty</option>
+      <option>Gaming</option>
+      
+    </select>
+  </div>
+</section>
+
+<section class="section" id="trending">
+<div class="sectionHead"><h2>Picked For You ♡</h2><button class="view" onclick="showToast('Showing all products')">View All ›</button></div>
+<div class="products" id="products"></div>
+</section>
+
+<section class="section" id="categories">
+<div class="sectionHead"><h2>Shop by Category</h2><button class="view" onclick="openCategoryMenu()">View All ›</button></div>
+<div class="cats" id="cats"></div>
+</section>
+
+<section class="mystery" id="mystery">
+<div><h2>MYSTERY<br>BOX</h2><p>Surprise is better<br>when it's from Zevqora!</p></div>
+<div class="box">🎁</div>
+<div class="explore"><small>STARTING AT</small><b>₹199</b><button onclick="addMystery()">EXPLORE NOW ›</button></div>
+</section>
+
+<div class="perks">
+<div class="perk"><b>🚚</b>Free<br>Delivery</div><div class="perk"><b>🛡</b>Secure<br>Payment</div><div class="perk"><b>↩</b>Easy<br>Returns</div><div class="perk"><b>🏅</b>Original<br>Products</div>
+</div>
+</div>
+
+<nav class="bottom">
+<button class="active" onclick="window.scrollTo({top:0,behavior:'smooth'})"><b>⌂</b>Home</button>
+<button onclick="showToast('Use your browser search/voice feature')"><b>⌕</b>Discover</button>
+<button onclick="showToast('Drops section')"><b>ϟ</b>Drops</button>
+<button onclick="cartView()"><b>🛒</b>Cart</button>
+<button onclick="showToast('Profile section')"><b>♙</b>You</button>
+</nav>
+
+<div class="modal" id="modal" onclick="closeModal(event)">
+  <div class="modalBox" onclick="event.stopPropagation()">
+    <div class="modalTop"><div class="modalTitle" id="modalTitle">ZEVQORA</div><button class="close" onclick="closeModal()">×</button></div>
+    <div id="modalContent"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const products=[
+["Women Printed Kurti","₹799","₹1,999","60% OFF","4.7 ★","https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=800&q=90","Fashion","Ready-made women's kurti | Sizes S, M, L, XL, XXL"],
+["Women Denim Jeans","₹999","₹2,499","60% OFF","4.6 ★","https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=800&q=90","Fashion","Women's ready-made jeans | Sizes 28, 30, 32, 34, 36"],
+["Women Straight Jeans","₹1,099","₹2,799","61% OFF","4.7 ★","https://images.unsplash.com/photo-1584370848010-d7fe6bc767ec?auto=format&fit=crop&w=800&q=90","Fashion","Women's straight-fit jeans | Sizes 28, 30, 32, 34, 36"],
+["Women Casual Top","₹599","₹1,499","60% OFF","4.6 ★","https://images.unsplash.com/photo-1564257577054-9e6b4a7a7c5b?auto=format&fit=crop&w=800&q=90","Fashion","Ready-made top | Sizes S, M, L, XL, XXL"],
+["Women Co-ord Set","₹1,299","₹2,999","57% OFF","4.7 ★","https://images.unsplash.com/photo-1485968579580-b6d095142e6e?auto=format&fit=crop&w=800&q=90","Fashion","Ready-made co-ord set | Sizes S, M, L, XL"],
+["Women Party Dress","₹1,499","₹3,499","57% OFF","4.8 ★","https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=800&q=90","Fashion","Ready-made dress | Sizes S, M, L, XL, XXL"],
+
+["boAt Airdopes Supreme","₹1,499","₹5,990","75% OFF","4.8 ★","https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?auto=format&fit=crop&w=800&q=90","Electronics","ENx Technology, in-ear detection, spatial audio"],
+["boAt Airdopes 148","₹1,299","₹4,490","71% OFF","4.9 ★","https://images.unsplash.com/photo-1600086827875-a63b01f1335c?auto=format&fit=crop&w=800&q=90","Electronics","Clear Calling, ASAP Charge"],
+["boAt Airdopes 121 PRO","₹999","₹2,990","67% OFF","4.9 ★","https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=800&q=90","Electronics","ASAP Charge, IWP Technology"],
+["boAt Airdopes 161","₹1,099","₹2,490","56% OFF","4.8 ★","https://images.unsplash.com/photo-1598331668826-20cecc596b86?auto=format&fit=crop&w=800&q=90","Electronics","ASAP Charge, IWP Technology"],
+["boAt Airdopes 181","₹1,599","₹2,990","47% OFF","4.8 ★","https://images.unsplash.com/photo-1588423771073-b8903fbb85b5?auto=format&fit=crop&w=800&q=90","Electronics","Clear Calling, BEAST Mode"],
+["boAt Airdopes 131","₹999","₹2,990","67% OFF","4.8 ★","https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?auto=format&fit=crop&w=800&q=90","Electronics","13mm drivers, IWP Technology"],
+
+["Kids Remote Control Racing Car","₹799","₹1,999","60% OFF","4.6 ★","https://images.unsplash.com/photo-1594784053795-8c3f6e9f5b7a?auto=format&fit=crop&w=800&q=90","Gaming","Kids toy game | Ages 6+"],
+["Kids Building Blocks Set","₹499","₹1,299","62% OFF","4.7 ★","https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&w=800&q=90","Gaming","Creative building game | Ages 5+"],
+["Kids Magnetic Chess Game","₹599","₹1,499","60% OFF","4.6 ★","https://images.unsplash.com/photo-1586165368502-1bad197a6461?auto=format&fit=crop&w=800&q=90","Gaming","Kids strategy board game | Ages 6+"],
+["Kids Ludo & Snake Ladder","₹299","₹699","57% OFF","4.5 ★","https://images.unsplash.com/photo-1606503153255-59d8b8b8219c?auto=format&fit=crop&w=800&q=90","Gaming","Family board game | Ages 5+"],
+["Kids Doctor Play Set","₹699","₹1,499","53% OFF","4.7 ★","https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=800&q=90","Gaming","Pretend-play set | Ages 3+"],
+["Kids Puzzle Activity Set","₹399","₹999","60% OFF","4.6 ★","https://images.unsplash.com/photo-1594736797933-d0b22f7e8d3d?auto=format&fit=crop&w=800&q=90","Gaming","Learning puzzle game | Ages 4+"],
+
+["3-Seater Fabric Sofa","₹14,999","₹29,999","50% OFF","4.6 ★","https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=90","Home","3-seater sofa | Easy-clean fabric"],
+["L-Shape Sofa","₹22,999","₹44,999","49% OFF","4.7 ★","https://images.unsplash.com/photo-1550226891-ef816aed4a98?auto=format&fit=crop&w=800&q=90","Home","L-shaped family sofa"],
+["2-Seater Sofa","₹11,999","₹24,999","52% OFF","4.5 ★","https://images.unsplash.com/photo-1550254478-ead40cc54513?auto=format&fit=crop&w=800&q=90","Home","Compact 2-seater sofa"],
+["Kitchen Storage Rack","₹699","₹1,499","53% OFF","4.6 ★","https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=800&q=90","Home","Kitchen organizer rack"],
+["Non-Stick Cookware Set","₹1,499","₹3,999","63% OFF","4.7 ★","https://images.unsplash.com/photo-1584990347449-ae3d0f7d3d9a?auto=format&fit=crop&w=800&q=90","Home","Frying pan, kadai and saucepan set"],
+["Kitchen Knife Set","₹599","₹1,299","54% OFF","4.6 ★","https://images.unsplash.com/photo-1593618998160-e34014e67546?auto=format&fit=crop&w=800&q=90","Home","Stainless-steel kitchen knife set"],
+["Dinner Set 24 Pieces","₹1,299","₹2,999","57% OFF","4.7 ★","https://images.unsplash.com/photo-1603199506016-b9a594b593c0?auto=format&fit=crop&w=800&q=90","Home","24-piece dining set"],
+
+["Vitamin C Face Cream","₹399","₹799","50% OFF","4.6 ★","https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=800&q=90","Beauty","Women's skincare | Moisturizing cream"],
+["Hydrating Face Moisturizer","₹499","₹999","50% OFF","4.7 ★","https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?auto=format&fit=crop&w=800&q=90","Beauty","Women's moisturizer | Daily use"],
+["Matte Foundation","₹599","₹1,299","54% OFF","4.6 ★","https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=800&q=90","Beauty","Makeup foundation | Multiple shades"],
+["Nude Lipstick Set","₹499","₹999","50% OFF","4.7 ★","https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&w=800&q=90","Beauty","Women's makeup | Lip colour set"],
+["Eyeshadow Palette","₹699","₹1,499","53% OFF","4.8 ★","https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&w=800&q=90","Beauty","Makeup palette | Multiple shades"],
+["Mascara & Eyeliner Combo","₹399","₹899","56% OFF","4.6 ★","https://images.unsplash.com/photo-1631214524020-7e18db9a8f3d?auto=format&fit=crop&w=800&q=90","Beauty","Eye makeup combo"],
+["Makeup Brush Set","₹599","₹1,299","54% OFF","4.7 ★","https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=90","Beauty","Professional-style makeup brushes"]
+,
+["Women Cotton Saree","₹899","₹1,999","55% OFF","4.6 ★","https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=90","Fashion","Ready-made saree | Blouse sizes S, M, L, XL"],
+["Women Anarkali Suit","₹1,299","₹2,999","57% OFF","4.7 ★","https://images.unsplash.com/photo-1583391733956-6c78276477e2?auto=format&fit=crop&w=800&q=90","Fashion","Ready-made suit | Sizes S, M, L, XL, XXL"],
+["Women Palazzo Set","₹999","₹2,199","55% OFF","4.6 ★","https://images.unsplash.com/photo-1591369822096-ffd140ec948f?auto=format&fit=crop&w=800&q=90","Fashion","Ready-made set | Sizes S, M, L, XL"],
+["Women Oversized T-Shirt","₹499","₹999","50% OFF","4.5 ★","https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=90","Fashion","Ready-made | Sizes S, M, L, XL, XXL"],
+["Women Cargo Pants","₹899","₹1,999","55% OFF","4.6 ★","https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=90","Fashion","Ready-made cargo | Sizes 28, 30, 32, 34, 36"],
+["Women Hoodie","₹799","₹1,999","60% OFF","4.7 ★","https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=800&q=90","Fashion","Ready-made | Sizes S, M, L, XL, XXL"],
+
+["boAt Airdopes 91","₹1,099","₹4,990","78% OFF","4.6 ★","https://images.unsplash.com/photo-1588423771073-b8903fbb85b5?auto=format&fit=crop&w=800&q=90","Electronics","Wireless earbuds, dual mic, long playback"],
+["boAt Airdopes 131 Pro","₹1,399","₹2,990","53% OFF","4.7 ★","https://images.unsplash.com/photo-1598331668826-20cecc596b86?auto=format&fit=crop&w=800&q=90","Electronics","Wireless earbuds, Pro variant"],
+["boAt Nirvana Ion","₹2,499","₹7,990","69% OFF","4.7 ★","https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?auto=format&fit=crop&w=800&q=90","Electronics","Wireless earbuds, long battery"],
+["boAt Rockerz 255 Pro+","₹1,099","₹3,990","72% OFF","4.8 ★","https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=90","Electronics","Neckband, low latency, fast charge"],
+["boAt Rockerz 110","₹699","₹2,490","72% OFF","4.8 ★","https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&w=800&q=90","Electronics","Bluetooth neckband"],
+["boAt Stone 352","₹1,699","₹3,490","51% OFF","4.7 ★","https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=800&q=90","Electronics","Portable Bluetooth speaker"],
+
+["Kids Car Racing Track","₹699","₹1,499","53% OFF","4.6 ★","https://images.unsplash.com/photo-1594784053795-8c3f6e9f5b7a?auto=format&fit=crop&w=800&q=90","Gaming","Kids racing game | Ages 5+"],
+["Kids Remote Control Jeep","₹999","₹1,999","50% OFF","4.7 ★","https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&w=800&q=90","Gaming","Remote-control toy | Ages 6+"],
+["Kids Ring Toss Game","₹349","₹699","50% OFF","4.5 ★","https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=800&q=90","Gaming","Indoor/outdoor kids game | Ages 4+"],
+["Kids Bowling Set","₹499","₹999","50% OFF","4.6 ★","https://images.unsplash.com/photo-1606503153255-59d8b8b8219c?auto=format&fit=crop&w=800&q=90","Gaming","Bowling play set | Ages 4+"],
+["Kids Carrom Board","₹799","₹1,599","50% OFF","4.7 ★","https://images.unsplash.com/photo-1586165368502-1bad197a6461?auto=format&fit=crop&w=800&q=90","Gaming","Family game | Ages 6+"],
+["Kids Memory Card Game","₹299","₹599","50% OFF","4.6 ★","https://images.unsplash.com/photo-1606092195730-5d7b9af1efc5?auto=format&fit=crop&w=800&q=90","Gaming","Learning game | Ages 4+"],
+
+["4-Seater Fabric Sofa","₹18,999","₹34,999","46% OFF","4.6 ★","https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=90","Home","4-seater family sofa"],
+["Recliner Sofa Chair","₹9,999","₹18,999","47% OFF","4.7 ★","https://images.unsplash.com/photo-1549497538-303791108f95?auto=format&fit=crop&w=800&q=90","Home","Single recliner chair"],
+["Sofa Side Table","₹1,299","₹2,499","48% OFF","4.5 ★","https://images.unsplash.com/photo-1532372320572-cda25653a26d?auto=format&fit=crop&w=800&q=90","Home","Wood-look side table"],
+["Kitchen Gas Lighter","₹199","₹399","50% OFF","4.5 ★","https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=800&q=90","Home","Kitchen ignition lighter"],
+["Pressure Cooker 5L","₹1,199","₹2,499","52% OFF","4.7 ★","https://images.unsplash.com/photo-1585515320310-259814833e62?auto=format&fit=crop&w=800&q=90","Home","5-litre pressure cooker"],
+["Mixer Grinder","₹1,999","₹3,999","50% OFF","4.6 ★","https://images.unsplash.com/photo-1570222094114-d054a817e56b?auto=format&fit=crop&w=800&q=90","Home","Kitchen mixer grinder"],
+["Dinner Plate Set","₹699","₹1,499","53% OFF","4.6 ★","https://images.unsplash.com/photo-1603199506016-b9a594b593c0?auto=format&fit=crop&w=800&q=90","Home","Dining plate set"],
+["Kitchen Container Set","₹599","₹1,299","54% OFF","4.7 ★","https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=800&q=90","Home","Airtight storage containers"],
+
+["Niacinamide Face Serum","₹399","₹799","50% OFF","4.7 ★","https://images.unsplash.com/photo-1556229010-6c3f2c9ca5f8?auto=format&fit=crop&w=800&q=90","Beauty","Women's skincare serum"],
+["Sunscreen SPF 50","₹499","₹999","50% OFF","4.8 ★","https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&w=800&q=90","Beauty","Daily sunscreen"],
+["Face Wash","₹299","₹599","50% OFF","4.6 ★","https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=800&q=90","Beauty","Women's daily cleanser"],
+["Blush Makeup Palette","₹499","₹999","50% OFF","4.7 ★","https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=90","Beauty","Face makeup palette"],
+["Compact Powder","₹349","₹699","50% OFF","4.6 ★","https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=800&q=90","Beauty","Face makeup | Multiple shades"],
+["Highlighter Makeup","₹399","₹799","50% OFF","4.7 ★","https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&w=800&q=90","Beauty","Glow makeup"],
+["Kajal Pencil","₹199","₹399","50% OFF","4.6 ★","https://images.unsplash.com/photo-1631214524020-7e18db9a8f3d?auto=format&fit=crop&w=800&q=90","Beauty","Eye makeup"],
+["Makeup Remover","₹299","₹599","50% OFF","4.6 ★","https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?auto=format&fit=crop&w=800&q=90","Beauty","Gentle makeup remover"],
+["Women Floral Kurti","₹699","₹1,799","61% OFF","4.6 ★","https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=800&q=90","Fashion","Ready-made | S, M, L, XL, XXL"],
+["Women Embroidered Kurti","₹999","₹2,499","60% OFF","4.7 ★","https://images.unsplash.com/photo-1583391733956-6c78276477e2?auto=format&fit=crop&w=800&q=90","Fashion","Ready-made | S, M, L, XL, XXL"],
+["Women Rayon Kurti","₹599","₹1,499","60% OFF","4.6 ★","https://images.unsplash.com/photo-1591369822096-ffd140ec948f?auto=format&fit=crop&w=800&q=90","Fashion","Ready-made | S, M, L, XL"],
+["Women Black Jeans","₹899","₹2,299","61% OFF","4.7 ★","https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=800&q=90","Fashion","Ready-made | 28, 30, 32, 34, 36"],
+["Women Blue Mom Jeans","₹999","₹2,499","60% OFF","4.6 ★","https://images.unsplash.com/photo-1584370848010-d7fe6bc767ec?auto=format&fit=crop&w=800&q=90","Fashion","Ready-made | 28, 30, 32, 34, 36"],
+["Women Skinny Fit Jeans","₹1,099","₹2,799","61% OFF","4.7 ★","https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=90","Fashion","Ready-made | 28, 30, 32, 34, 36"],
+["Women Cargo Jeans","₹1,199","₹2,999","60% OFF","4.7 ★","https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&w=800&q=90","Fashion","Ready-made | 28, 30, 32, 34, 36"],
+["Women Crop Top","₹399","₹999","60% OFF","4.5 ★","https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=90","Fashion","Ready-made | S, M, L, XL"],
+["Women Formal Shirt","₹599","₹1,499","60% OFF","4.6 ★","https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&w=800&q=90","Fashion","Ready-made | S, M, L, XL, XXL"],
+["Women Palazzo Pants","₹699","₹1,699","59% OFF","4.6 ★","https://images.unsplash.com/photo-1591369822096-ffd140ec948f?auto=format&fit=crop&w=800&q=90","Fashion","Ready-made | S, M, L, XL"],
+["Women Winter Sweater","₹899","₹1,999","55% OFF","4.7 ★","https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=800&q=90","Fashion","Ready-made | S, M, L, XL, XXL"],
+["Women Denim Jacket","₹1,299","₹2,999","57% OFF","4.7 ★","https://images.unsplash.com/photo-1543076447-215ad9ba6923?auto=format&fit=crop&w=800&q=90","Fashion","Ready-made | S, M, L, XL"],
+["Women Leggings Pack","₹499","₹999","50% OFF","4.5 ★","https://images.unsplash.com/photo-1506629905607-d9d8b8b7f9f2?auto=format&fit=crop&w=800&q=90","Fashion","Pack of 2 | S, M, L, XL"],
+["Women Night Suit","₹699","₹1,499","53% OFF","4.6 ★","https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=90","Fashion","Ready-made | S, M, L, XL"],
+["Women Long Dress","₹1,099","₹2,499","56% OFF","4.7 ★","https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=800&q=90","Fashion","Ready-made | S, M, L, XL, XXL"],
+
+["boAt Airdopes 161 ANC","₹1,699","₹5,999","72% OFF","4.8 ★","https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=800&q=90","Electronics","ANC, long playback, BEAST Mode"],
+["boAt Airdopes 700 ANC","₹1,519","₹7,990","81% OFF","4.7 ★","https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?auto=format&fit=crop&w=800&q=90","Electronics","Premium ANC earbuds"],
+["boAt Airdopes 411 ANC","₹2,069","₹4,990","58% OFF","4.7 ★","https://images.unsplash.com/photo-1600086827875-a63b01f1335c?auto=format&fit=crop&w=800&q=90","Electronics","ANC earbuds"],
+["boAt Airdopes 131 Pro M","₹1,399","₹2,990","53% OFF","4.7 ★","https://images.unsplash.com/photo-1598331668826-20cecc596b86?auto=format&fit=crop&w=800&q=90","Electronics","Pro earbuds, bass"],
+["boAt Airdopes 91","₹1,099","₹4,990","78% OFF","4.6 ★","https://images.unsplash.com/photo-1588423771073-b8903fbb85b5?auto=format&fit=crop&w=800&q=90","Electronics","Budget wireless earbuds"],
+["boAt Nirvana Ivy Pro","₹4,999","₹7,549","34% OFF","4.7 ★","https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?auto=format&fit=crop&w=800&q=90","Electronics","LDAC, Dolby Atmos"],
+["boAt Nirvana Crystl","₹1,999","₹3,499","43% OFF","4.6 ★","https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=800&q=90","Electronics","Adaptive EQ, spatial sound"],
+["boAt Nirvana Crown","₹2,499","₹9,990","75% OFF","4.7 ★","https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?auto=format&fit=crop&w=800&q=90","Electronics","ANC, ENx microphones"],
+["boAt Nirvana X","₹2,799","₹5,990","53% OFF","4.6 ★","https://images.unsplash.com/photo-1600086827875-a63b01f1335c?auto=format&fit=crop&w=800&q=90","Electronics","Premium earbuds"],
+["boAt Nirvana Zenith Pro","₹2,699","₹5,990","55% OFF","4.7 ★","https://images.unsplash.com/photo-1598331668826-20cecc596b86?auto=format&fit=crop&w=800&q=90","Electronics","Long playback earbuds"],
+["boAt Airdopes Prime 701","₹2,499","₹5,990","58% OFF","4.7 ★","https://images.unsplash.com/photo-1588423771073-b8903fbb85b5?auto=format&fit=crop&w=800&q=90","Electronics","Prime series earbuds"],
+["boAt Airdopes 701 ANC","₹3,990","₹7,990","50% OFF","4.7 ★","https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?auto=format&fit=crop&w=800&q=90","Electronics","Premium ANC earbuds"],
+["boAt Rockerz 255 Pro+","₹1,099","₹3,990","72% OFF","4.8 ★","https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=90","Electronics","Bluetooth neckband"],
+["boAt Rockerz 110","₹699","₹2,490","72% OFF","4.8 ★","https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&w=800&q=90","Electronics","Bluetooth neckband"],
+["boAt Stone 352","₹1,699","₹3,490","51% OFF","4.7 ★","https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=800&q=90","Electronics","Portable speaker"],
+["boAt Stone 1200","₹2,499","₹5,990","58% OFF","4.7 ★","https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&w=800&q=90","Electronics","Portable Bluetooth speaker"],
+["boAt Bassheads 100","₹399","₹999","60% OFF","4.6 ★","https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&w=800&q=90","Electronics","Wired earphones"],
+
+["Kids Remote Control Car","₹799","₹1,599","50% OFF","4.6 ★","https://images.unsplash.com/photo-1594784053795-8c3f6e9f5b7a?auto=format&fit=crop&w=800&q=90","Gaming","Kids game | Ages 6+"],
+["Kids Police Car","₹699","₹1,399","50% OFF","4.6 ★","https://images.unsplash.com/photo-1594784053795-8c3f6e9f5b7a?auto=format&fit=crop&w=800&q=90","Gaming","Kids toy | Ages 5+"],
+["Kids Construction Truck","₹599","₹1,299","54% OFF","4.5 ★","https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&w=800&q=90","Gaming","Construction play set"],
+["Kids Doll House","₹1,099","₹2,499","56% OFF","4.7 ★","https://images.unsplash.com/photo-1594736797933-d0b22f7e8d3d?auto=format&fit=crop&w=800&q=90","Gaming","Pretend play | Ages 4+"],
+["Kids Kitchen Play Set","₹799","₹1,599","50% OFF","4.7 ★","https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=800&q=90","Gaming","Pretend play | Ages 3+"],
+["Kids Doctor Set","₹699","₹1,499","53% OFF","4.7 ★","https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=800&q=90","Gaming","Pretend play | Ages 3+"],
+["Kids Magnetic Tiles","₹899","₹1,999","55% OFF","4.8 ★","https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&w=800&q=90","Gaming","Building game | Ages 5+"],
+["Kids Puzzle 100 Pieces","₹299","₹599","50% OFF","4.6 ★","https://images.unsplash.com/photo-1594736797933-d0b22f7e8d3d?auto=format&fit=crop&w=800&q=90","Gaming","Puzzle game | Ages 5+"],
+["Kids Chess Board","₹499","₹999","50% OFF","4.7 ★","https://images.unsplash.com/photo-1586165368502-1bad197a6461?auto=format&fit=crop&w=800&q=90","Gaming","Strategy game | Ages 6+"],
+["Kids Carrom Board","₹799","₹1,599","50% OFF","4.7 ★","https://images.unsplash.com/photo-1586165368502-1bad197a6461?auto=format&fit=crop&w=800&q=90","Gaming","Family game | Ages 6+"],
+["Kids Bowling Set","₹499","₹999","50% OFF","4.6 ★","https://images.unsplash.com/photo-1606503153255-59d8b8b8219c?auto=format&fit=crop&w=800&q=90","Gaming","Indoor game | Ages 4+"],
+["Kids Ring Toss","₹349","₹699","50% OFF","4.5 ★","https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=800&q=90","Gaming","Family game | Ages 4+"],
+["Kids Ludo Board","₹299","₹599","50% OFF","4.6 ★","https://images.unsplash.com/photo-1606092195730-5d7b9af1efc5?auto=format&fit=crop&w=800&q=90","Gaming","Board game | Ages 5+"],
+
+["3-Seater Fabric Sofa","₹14,999","₹29,999","50% OFF","4.6 ★","https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=90","Home","3-seater sofa"],
+["4-Seater Family Sofa","₹18,999","₹34,999","46% OFF","4.6 ★","https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=90","Home","4-seater sofa"],
+["L-Shape Corner Sofa","₹22,999","₹44,999","49% OFF","4.7 ★","https://images.unsplash.com/photo-1550226891-ef816aed4a98?auto=format&fit=crop&w=800&q=90","Home","L-shaped sofa"],
+["Recliner Sofa Chair","₹9,999","₹18,999","47% OFF","4.7 ★","https://images.unsplash.com/photo-1549497538-303791108f95?auto=format&fit=crop&w=800&q=90","Home","Single recliner"],
+["Sofa Side Table","₹1,299","₹2,499","48% OFF","4.5 ★","https://images.unsplash.com/photo-1532372320572-cda25653a26d?auto=format&fit=crop&w=800&q=90","Home","Living-room table"],
+["Coffee Table","₹1,799","₹3,499","49% OFF","4.6 ★","https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=800&q=90","Home","Living-room table"],
+["Kitchen Storage Rack","₹699","₹1,499","53% OFF","4.6 ★","https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=800&q=90","Home","Kitchen organizer"],
+["Kitchen Container Set","₹599","₹1,299","54% OFF","4.7 ★","https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=800&q=90","Home","Airtight containers"],
+["Non-Stick Cookware Set","₹1,499","₹3,999","63% OFF","4.7 ★","https://images.unsplash.com/photo-1584990347449-ae3d0f7d3d9a?auto=format&fit=crop&w=800&q=90","Home","Kadai, pan and saucepan"],
+["Pressure Cooker 5L","₹1,199","₹2,499","52% OFF","4.7 ★","https://images.unsplash.com/photo-1585515320310-259814833e62?auto=format&fit=crop&w=800&q=90","Home","5L pressure cooker"],
+["Mixer Grinder","₹1,999","₹3,999","50% OFF","4.6 ★","https://images.unsplash.com/photo-1570222094114-d054a817e56b?auto=format&fit=crop&w=800&q=90","Home","Kitchen mixer grinder"],
+["Electric Kettle","₹699","₹1,499","53% OFF","4.6 ★","https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?auto=format&fit=crop&w=800&q=90","Home","Electric kitchen kettle"],
+["Dinner Set 24 Pieces","₹1,299","₹2,999","57% OFF","4.7 ★","https://images.unsplash.com/photo-1603199506016-b9a594b593c0?auto=format&fit=crop&w=800&q=90","Home","24-piece dinner set"],
+["Kitchen Knife Set","₹599","₹1,299","54% OFF","4.6 ★","https://images.unsplash.com/photo-1593618998160-e34014e67546?auto=format&fit=crop&w=800&q=90","Home","Stainless-steel knife set"],
+["Chopping Board","₹299","₹599","50% OFF","4.5 ★","https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=800&q=90","Home","Kitchen chopping board"],
+
+["Vitamin C Face Cream","₹399","₹799","50% OFF","4.6 ★","https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=800&q=90","Beauty","Women's face cream"],
+["Aloe Vera Face Gel","₹299","₹599","50% OFF","4.7 ★","https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?auto=format&fit=crop&w=800&q=90","Beauty","Women's skincare"],
+["Hydrating Moisturizer","₹499","₹999","50% OFF","4.7 ★","https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?auto=format&fit=crop&w=800&q=90","Beauty","Daily moisturizer"],
+["Sunscreen SPF 50","₹499","₹999","50% OFF","4.8 ★","https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&w=800&q=90","Beauty","Daily sunscreen"],
+["Face Wash","₹299","₹599","50% OFF","4.6 ★","https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=800&q=90","Beauty","Women's cleanser"],
+["Niacinamide Serum","₹399","₹799","50% OFF","4.7 ★","https://images.unsplash.com/photo-1556229010-6c3f2c9ca5f8?auto=format&fit=crop&w=800&q=90","Beauty","Women's face serum"],
+["Matte Foundation","₹599","₹1,299","54% OFF","4.6 ★","https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=800&q=90","Beauty","Makeup foundation | Multiple shades"],
+["Compact Powder","₹349","₹699","50% OFF","4.6 ★","https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=800&q=90","Beauty","Makeup | Multiple shades"],
+["Blush Palette","₹499","₹999","50% OFF","4.7 ★","https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=90","Beauty","Face makeup palette"],
+["Highlighter","₹399","₹799","50% OFF","4.7 ★","https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&w=800&q=90","Beauty","Glow makeup"],
+["Nude Lipstick Set","₹499","₹999","50% OFF","4.7 ★","https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&w=800&q=90","Beauty","Lip makeup set"],
+["Liquid Lipstick","₹299","₹599","50% OFF","4.6 ★","https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&w=800&q=90","Beauty","Long-wear lip colour"],
+["Eyeshadow Palette","₹699","₹1,499","53% OFF","4.8 ★","https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&w=800&q=90","Beauty","Multiple shades"],
+["Mascara","₹299","₹599","50% OFF","4.6 ★","https://images.unsplash.com/photo-1631214524020-7e18db9a8f3d?auto=format&fit=crop&w=800&q=90","Beauty","Eye makeup"],
+["Kajal & Eyeliner Combo","₹299","₹699","57% OFF","4.6 ★","https://images.unsplash.com/photo-1631214524020-7e18db9a8f3d?auto=format&fit=crop&w=800&q=90","Beauty","Eye makeup combo"],
+["Makeup Brush Set","₹599","₹1,299","54% OFF","4.7 ★","https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=90","Beauty","Makeup brushes"],
+["Makeup Remover","₹299","₹599","50% OFF","4.6 ★","https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?auto=format&fit=crop&w=800&q=90","Beauty","Gentle remover"],
+["Nail Paint Set","₹399","₹899","56% OFF","4.7 ★","https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=800&q=90","Beauty","Multiple colours"],
+["Beauty Makeup Kit","₹899","₹1,999","55% OFF","4.7 ★","https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=800&q=90","Beauty","Face, eye and lip makeup"]
+];
+
+const cats=[["👗","Fashion"],["🎧","Electronics"],["🛋️","Home"],["💄","Beauty"],["🎮","Gaming"]];
+let cart=0;
+
+function openModal(title, content){
+  document.getElementById('modalTitle').textContent=title;
+  document.getElementById('modalContent').innerHTML=content;
+  document.getElementById('modal').classList.add('show');
+}
+function closeModal(e){
+  if(!e || e.target.id==='modal') document.getElementById('modal').classList.remove('show');
+}
+function goTo(id){
+  document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function openSearch(){
+  openModal('Ask Zevqora', `<input class="modalInput" id="searchInput" placeholder="What are you looking for?"><button class="modalBtn" onclick="doSearch()">Search</button>`);
+}
+function doSearch(){
+  const q=document.getElementById('searchInput')?.value.trim();
+  if(!q){toast('Type something to search');return}
+  closeModal(); toast('Searching for: '+q);
+}
+function openMenu(){
+  openModal('ZEVQORA Menu', `<div class="menuList">
+    <button onclick="closeModal();goTo('trending')">🛍 Trending Products</button>
+    <button onclick="openCategory('Fashion')">▦ Shop by Category</button>
+    <button onclick="closeModal();goTo('drops')">⚡ Today’s Drops</button>
+    <button onclick="closeModal();goTo('mystery')">🎁 Mystery Box</button>
+    <button onclick="openProfile()">👤 My Account</button>
+  </div>`);
+}
+function openProfile(){
+  openModal('My Account', `<input class="modalInput" placeholder="Mobile number or email"><button class="modalBtn" onclick="toast('Login flow opened');closeModal()">Continue</button>`);
+}
+function openCategoryMenu(){
+  openModal('Shop by Category', `<div class="menuList">
+    ${cats.map(c => `<button onclick="openCategory('${c[1]}')">${c[0]} ${c[1]}</button>`).join("")}
+    <button onclick="closeModal(); document.getElementById('catalogCategory').value='All'; document.getElementById('catalogSearch').value=''; filterProducts(); goTo('trending')">🛍 All Products</button>
+  </div>`);
+}
+
+function openCategory(name){ closeModal(); filterCategory(name); }
+function openProduct(name,price,old,off,rating,img){
+  openModal(name, `<div class="productDetail"><img src="${img}" alt=""><div><div class="detailPrice">${price}<span class="detailOld">${old}</span></div><div class="detailOff">${off}</div><p>Rating: ${rating}</p></div></div><button class="modalBtn" onclick="addCart('${name.replace(/'/g,"\\'")}');closeModal()">Add to Cart</button><button class="modalBtn" style="background:#24242d" onclick="closeModal()">Close</button>`);
+}
+function openMystery(){
+  openModal('Mystery Box', `<p>Surprise products starting from <b style="color:#ffd400">₹199</b>.</p><p>Choose the Mystery Box and add it to your cart.</p><button class="modalBtn" onclick="addCart('Mystery Box');closeModal()">Add Mystery Box to Cart</button>`);
+}
+
+
+let activeProducts=[...products];
+let page=1;
+const PAGE_SIZE=30;
+
+function render(list=activeProducts){
+  activeProducts=list;
+  const count=document.getElementById("catalogCount"); if(count) count.textContent=`(${list.length} catalogue items)`;
+  const visible=list.slice(0,page*PAGE_SIZE);
+  document.getElementById("products").innerHTML=visible.map((p,i)=>`
+    <article class="product" onclick="openProductByIndex(${products.indexOf(p)})">
+      <div class="productImg"><img src="${p[5]}" alt="${p[0]}" onerror="this.src='https://images.unsplash.com/photo-1560343090-f0409e92791a?auto=format&fit=crop&w=800&q=80'">
+        <button class="heart" onclick="event.stopPropagation();wishlist(${products.indexOf(p)})">♡</button>
+        <span class="rating">${p[4]}</span>
+      </div>
+      <div class="pbody"><h3>${p[0]}</h3>
+        <div class="price">${p[1]} ${p[2]?`<span class="old">${p[2]}</span>`:""}</div>
+        <div class="off">${p[3]||""}</div>
+        <button class="add" onclick="event.stopPropagation();addCart(${products.indexOf(p)})">Add to Cart</button>
+      </div>
+    </article>`).join("");
+  const old=document.getElementById("loadMore");
+  if(old) old.remove();
+  if(visible.length<list.length){
+    const b=document.createElement("button");
+    b.id="loadMore"; b.className="loadMore"; b.textContent=`Load more (${list.length-visible.length} left)`;
+    b.onclick=()=>{page++;render(list)};
+    document.getElementById("products").after(b);
+  }
+  document.getElementById("cats").innerHTML=cats.map(c=>`
+    <button class="cat" onclick="filterCategory('${c[1]}')"><div class="catImg">${c[0]}</div><label>${c[1]}</label></button>`).join("");
+}
+function filterProducts(){
+  page=1;
+  const q=(document.getElementById("catalogSearch").value||"").toLowerCase();
+  const c=document.getElementById("catalogCategory").value;
+  activeProducts=products.filter(p=>
+    (!q || p[0].toLowerCase().includes(q)) &&
+    (c==="All" || p[6]===c)
+  );
+  render(activeProducts);
+}
+function filterCategory(c){
+  const select=document.getElementById("catalogCategory");
+  const search=document.getElementById("catalogSearch");
+  if(select) select.value=c;
+  if(search) search.value="";
+  filterProducts();
+  closeModal();
+  goTo("trending");
+}
+function openProductByIndex(i){
+  const p=products[i];
+  let options="";
+  if(p[6]==="Fashion"){
+    const sizes=p[7].match(/Sizes ([^|]+)/)?.[1] || "S, M, L, XL";
+    options=`<label style="display:block;margin-top:12px;font-size:12px;color:#aaa">Select Ready-made Size</label>
+      <select class="modalInput" id="sizeSelect">${sizes.split(",").map(s=>`<option>${s.trim()}</option>`).join("")}</select>`;
+  }else if(p[6]==="Beauty"){
+    options=`<label style="display:block;margin-top:12px;font-size:12px;color:#aaa">Select Variant</label>
+      <select class="modalInput" id="variantSelect"><option>Standard</option><option>Gift Pack</option></select>`;
+  }
+
+  const base=p[5];
+  const safeName=String(p[0]).replace(/"/g,'&quot;');
+
+  const gallery=`<div class="productGallery">
+    <div class="galleryMain" id="galleryMain_${i}">
+      <img id="galleryImage_${i}" src="${base}" alt="${safeName}"
+           onclick="openFullPhoto(this.src,this.alt)"
+           onerror="this.style.opacity='.25'">
+      <span class="galleryBadge">📸 Product Photo</span>
+    </div>
+    <div class="gallerySingleNote">This is the original photo attached to this product.</div>
+  </div>`;
+
+  openModal(p[0],`${gallery}<div class="productDetail"><div>
+    <div class="detailPrice">${p[1]} ${p[2]?`<span class="detailOld">${p[2]}</span>`:""}</div>
+    <div class="detailOff">${p[3]||""}</div>
+    <p>Category: ${p[6]}</p><p>Rating: ${p[4]}</p><p>${p[7]}</p>
+  </div></div>${options}
+  <button class="modalBtn" onclick="addSelectedCart(${i});closeModal()">Add to Cart</button>
+  <button class="modalBtn" style="background:#24242d" onclick="closeModal()">Close</button>`);
+}
+
+
+function openFullPhoto(url, altText){
+  const lb=document.getElementById("zevqoraPhotoLightbox");
+  const im=document.getElementById("zevqoraFullPhoto");
+  if(!lb||!im)return;
+  im.src=url; im.alt=altText||"Full product photo";
+  lb.style.display="flex";
+}
+function closeFullPhoto(e){
+  if(e) e.stopPropagation();
+  const lb=document.getElementById("zevqoraPhotoLightbox");
+  if(lb) lb.style.display="none";
+}
+
+function setGalleryImage(i,url){
+  const img=document.getElementById("galleryImage_"+i);
+  if(img) img.src=url;
+}
+function addSelectedCart(i){
+  const p=products[i];
+  let suffix="";
+  if(p[6]==="Fashion"){ suffix=" | Size: "+(document.getElementById("sizeSelect")?.value||""); }
+  if(p[6]==="Beauty"){ suffix=" | Variant: "+(document.getElementById("variantSelect")?.value||"Standard"); }
+  cart++;
+  document.getElementById("cartCount").textContent=cart;
+  showToast(p[0]+suffix+" added to cart");
+}
+function addCart(i){cart++;document.getElementById("cartCount").textContent=cart;const p=products[i];showToast((p?p[0]:String(i))+" added to cart")}
+function addMystery(){cart++;document.getElementById("cartCount").textContent=cart;showToast("Mystery Box added to cart")}
+function showCart(){showToast(cart?`Cart: ${cart} item${cart>1?"s":""}`:"Cart is empty")}
+function wishlist(){showToast("Added to wishlist")}
+function category(c){showToast(c+" selected")}
+function photoSearch(){showToast("Photo search requires camera/file permission")}
+function scanCode(){showToast("QR/barcode scanner requires camera permission")}
+function startVoice(){
+if(!("webkitSpeechRecognition" in window)){showToast("Voice search is not supported in this browser");return}
+const r=new webkitSpeechRecognition();r.lang="en-IN";r.onstart=()=>showToast("Listening...");r.onresult=e=>showToast("Heard: "+e.results[0][0].transcript);r.start();
+}
+function showToast(t){const x=document.getElementById("toast");x.textContent=t;x.classList.add("show");clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>x.classList.remove("show"),1800)}
+document.getElementById("menuBtn").onclick=openMenu;
+render();
+let end=Date.now()+((2*3600+41*60+18)*1000);
+setInterval(()=>{let n=Math.max(0,end-Date.now()),s=Math.floor(n/1000);document.getElementById("hh").textContent=String(Math.floor(s/3600)).padStart(2,"0");document.getElementById("mm").textContent=String(Math.floor(s%3600/60)).padStart(2,"0");document.getElementById("ss").textContent=String(s%60).padStart(2,"0")},1000);
+</script>
+
+<div id="zevqoraPhotoLightbox" onclick="closeFullPhoto(event)">
+  <button class="lbClose" type="button" onclick="closeFullPhoto(event)">×</button>
+  <img id="zevqoraFullPhoto" src="" alt="Full product photo">
+  <div class="lbHint">Tap × to close</div>
+</div>
+</body>
+</html>
